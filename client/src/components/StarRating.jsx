@@ -3,7 +3,7 @@ import { assets } from "../assets/assets";
 
 const StarRating = ({ rating = 4 }) => {
   return (
-    <div>
+    <div className="flex items-center">
       {Array(5)
         .fill("")
         .map((_, index) => (
