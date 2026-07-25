@@ -1,8 +1,8 @@
-import React from "react";
 import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { useClerk, useUser, UserButton } from "@clerk/react";
+import { useAppContext } from "../context/useAppContext";
 
 const BookIcon = () => (
   <svg
@@ -28,33 +28,45 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Hotels", path: "/rooms" },
-    { name: "Experience", path: "/" },
-    { name: "About", path: "/" },
+    { name: "My Bookings", path: "/my-bookings" },
   ];
 
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [atTop, setAtTop] = useState(() => window.scrollY <= 10);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const { openSignIn } = useClerk();
   const { user } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
+  const { isOwner, setShowHotelReg } = useAppContext();
+
+  // The transparent navbar only makes sense over the home page hero; every
+  // other route gets the solid treatment straight away.
+  const isHome = location.pathname === "/";
+  const isScrolled = !isHome || !atTop;
 
   useEffect(() => {
-    if (location.pathname !== "/") {
-      setIsScrolled(true);
-      return;
-    } else {
-      setIsScrolled(false);
-    }
-    setIsScrolled((prev) => (location.pathname !== "/" ? true : prev));
-
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setAtTop(window.scrollY <= 10);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [location.pathname]);
+  }, []);
+
+  // Prevent background scrolling while the mobile drawer is open.
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
+
+  const handleOwnerClick = () => {
+    setIsMenuOpen(false);
+    if (isOwner) {
+      navigate("/owner");
+    } else {
+      setShowHotelReg(true);
+    }
+  };
 
   return (
     <nav
@@ -71,33 +83,45 @@ const Navbar = () => {
 
       {/* Desktop Nav */}
       <div className="hidden md:flex items-center gap-4 lg:gap-8">
-        {navLinks.map((link, i) => (
-          <a
-            key={i}
-            href={link.path}
-            className={`group flex flex-col gap-0.5 ${isScrolled ? "text-gray-700" : "text-white"}`}
+        {navLinks.map((link) => (
+          <NavLink
+            key={link.path}
+            to={link.path}
+            className={({ isActive }) =>
+              `group flex flex-col gap-0.5 ${isScrolled ? "text-gray-700" : "text-white"} ${isActive ? "font-medium" : ""}`
+            }
           >
-            {link.name}
-            <div
-              className={`${isScrolled ? "bg-gray-700" : "bg-white"} h-0.5 w-0 group-hover:w-full transition-all duration-300`}
-            />
-          </a>
+            {({ isActive }) => (
+              <>
+                {link.name}
+                <div
+                  className={`${isScrolled ? "bg-gray-700" : "bg-white"} h-0.5 ${isActive ? "w-full" : "w-0 group-hover:w-full"} transition-all duration-300`}
+                />
+              </>
+            )}
+          </NavLink>
         ))}
         <button
           className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? "text-black" : "text-white"} transition-all`}
-          onClick={() => navigate("/owner")}
+          onClick={handleOwnerClick}
         >
-          Dashboard
+          {isOwner ? "Dashboard" : "List Your Hotel"}
         </button>
       </div>
 
       {/* Desktop Right */}
       <div className="hidden md:flex items-center gap-4">
-        <img
-          src={assets.searchIcon}
-          alt="search"
-          className={`${isScrolled && "invert"} h-7 transition-all duration-500 `}
-        />
+        <button
+          type="button"
+          aria-label="Search rooms"
+          onClick={() => navigate("/rooms")}
+        >
+          <img
+            src={assets.searchIcon}
+            alt=""
+            className={`${isScrolled && "invert"} h-7 cursor-pointer transition-all duration-500`}
+          />
+        </button>
 
         {user ? (
           <UserButton>
@@ -111,8 +135,8 @@ const Navbar = () => {
           </UserButton>
         ) : (
           <button
-            onClick={openSignIn}
-            className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 ${isScrolled ? "text-white bg-black" : "bg-white text-black"}`}
+            onClick={() => openSignIn()}
+            className={`px-8 py-2.5 rounded-full ml-4 cursor-pointer transition-all duration-500 ${isScrolled ? "text-white bg-black" : "bg-white text-black"}`}
           >
             Login
           </button>
@@ -134,12 +158,18 @@ const Navbar = () => {
           </UserButton>
         )}
 
-        <img
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          src={assets.menuIcon}
-          alt=""
-          className={`${isScrolled && "invert"} h-4 `}
-        />
+        <button
+          type="button"
+          aria-label="Open menu"
+          aria-expanded={isMenuOpen}
+          onClick={() => setIsMenuOpen(true)}
+        >
+          <img
+            src={assets.menuIcon}
+            alt=""
+            className={`${isScrolled && "invert"} h-4 `}
+          />
+        </button>
       </div>
 
       {/* Mobile Menu */}
@@ -148,29 +178,35 @@ const Navbar = () => {
       >
         <button
           className="absolute top-4 right-4"
+          aria-label="Close menu"
           onClick={() => setIsMenuOpen(false)}
         >
-          <img src={assets.closeIcon} alt="close-menu" className="h-6.5" />
+          <img src={assets.closeIcon} alt="" className="h-6.5" />
         </button>
 
-        {navLinks.map((link, i) => (
-          <a key={i} href={link.path} onClick={() => setIsMenuOpen(false)}>
+        {navLinks.map((link) => (
+          <Link
+            key={link.path}
+            to={link.path}
+            onClick={() => setIsMenuOpen(false)}
+          >
             {link.name}
-          </a>
+          </Link>
         ))}
 
-        {user && (
-          <button
-            className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all"
-            onClick={() => navigate("/owner")}
-          >
-            Dashboard
-          </button>
-        )}
+        <button
+          className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all"
+          onClick={handleOwnerClick}
+        >
+          {isOwner ? "Dashboard" : "List Your Hotel"}
+        </button>
 
         {!user && (
           <button
-            onClick={openSignIn}
+            onClick={() => {
+              setIsMenuOpen(false);
+              openSignIn();
+            }}
             className="bg-black text-white px-8 py-2.5 rounded-full transition-all duration-500"
           >
             Login
