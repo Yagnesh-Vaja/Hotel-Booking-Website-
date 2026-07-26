@@ -1,0 +1,1394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hotel Booking — React Concepts Explained</title>
+<style>
+  :root{
+    --bg:#fbfaf7; --panel:#ffffff; --ink:#1b1c1f; --muted:#5f6470;
+    --line:#e4e2dc; --accent:#2563eb; --accent-soft:#eaf0ff;
+    --green:#0f8f5b; --green-soft:#e6f6ee;
+    --amber:#b7791f; --amber-soft:#fdf3e0;
+    --purple:#6d3fc4; --purple-soft:#f0eaff;
+    --code-bg:#1e2128; --code-ink:#e6e6e6;
+    --radius:12px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14161a; --panel:#1b1e24; --ink:#e9e9ec; --muted:#a0a6b3;
+      --line:#2c313a; --accent:#7aa2ff; --accent-soft:#1e2740;
+      --green:#4ad295; --green-soft:#16302a;
+      --amber:#e0b25f; --amber-soft:#312716;
+      --purple:#b596f5; --purple-soft:#251d3a;
+      --code-bg:#101317; --code-ink:#e6e6e6;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px; margin:0 auto; padding:48px 20px 120px}
+  header.hero{
+    border:1px solid var(--line); background:var(--panel);
+    border-radius:var(--radius); padding:36px 32px; margin-bottom:40px;
+  }
+  header.hero .eyebrow{
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); font-weight:700; margin:0 0 10px;
+  }
+  h1{font-size:clamp(28px,5vw,42px); line-height:1.15; margin:0 0 12px; letter-spacing:-.02em}
+  h2{
+    font-size:26px; letter-spacing:-.01em; margin:56px 0 14px;
+    padding-bottom:10px; border-bottom:2px solid var(--line);
+  }
+  h3{font-size:19px; margin:32px 0 10px}
+  h4{font-size:15px; margin:20px 0 6px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em}
+  p{margin:12px 0}
+  .lead{font-size:18px; color:var(--muted); margin:0}
+  code{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:.88em; background:var(--accent-soft); color:var(--accent);
+    padding:2px 6px; border-radius:5px;
+  }
+  pre{
+    background:var(--code-bg); color:var(--code-ink); padding:16px 18px;
+    border-radius:10px; overflow-x:auto; font-size:13.5px; line-height:1.6;
+    margin:14px 0;
+  }
+  pre code{background:none; color:inherit; padding:0; font-size:inherit}
+  .tok-key{color:#c792ea}.tok-str{color:#c3e88d}.tok-fn{color:#82aaff}
+  .tok-com{color:#7f8ea3; font-style:italic}.tok-tag{color:#f07178}.tok-attr{color:#ffcb6b}
+  .tok-int{color:#f78c6c}
+  .card{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:var(--radius); padding:22px 24px; margin:18px 0;
+  }
+  .note{border-left:4px solid var(--accent); background:var(--accent-soft); padding:14px 18px; border-radius:0 10px 10px 0; margin:16px 0}
+  .tip{border-left:4px solid var(--green); background:var(--green-soft); padding:14px 18px; border-radius:0 10px 10px 0; margin:16px 0}
+  .warn{border-left:4px solid var(--amber); background:var(--amber-soft); padding:14px 18px; border-radius:0 10px 10px 0; margin:16px 0}
+  .note p,.tip p,.warn p{margin:6px 0}
+  .file{
+    display:inline-block; font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:12.5px; background:var(--purple-soft); color:var(--purple);
+    padding:2px 8px; border-radius:5px; font-weight:600;
+  }
+  table{width:100%; border-collapse:collapse; margin:16px 0; font-size:14.5px}
+  th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top}
+  th{font-size:12px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted)}
+  .scroll{overflow-x:auto}
+  ul,ol{padding-left:22px} li{margin:6px 0}
+
+  /* ---------- diagram primitives ---------- */
+  .diagram{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px 22px; margin:22px 0; overflow-x:auto;
+  }
+  .diagram .cap{font-size:12.5px; color:var(--muted); text-align:center; margin-top:16px}
+  .box{
+    border:2px solid var(--line); border-radius:10px; padding:10px 14px;
+    background:var(--panel); text-align:center; min-width:120px;
+  }
+  .box b{display:block; font-size:14px}
+  .box small{color:var(--muted); font-size:11.5px; display:block; margin-top:2px}
+  .box.acc{border-color:var(--accent); background:var(--accent-soft)}
+  .box.grn{border-color:var(--green); background:var(--green-soft)}
+  .box.pur{border-color:var(--purple); background:var(--purple-soft)}
+  .box.amb{border-color:var(--amber); background:var(--amber-soft)}
+  .row{display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap}
+  .col{display:flex; flex-direction:column; align-items:center; gap:8px}
+  .arrow{color:var(--muted); font-size:20px; line-height:1}
+  .stack{display:flex; flex-direction:column; gap:0; align-items:stretch}
+  .nest{
+    border:2px dashed var(--line); border-radius:10px; padding:12px;
+    margin:0; position:relative;
+  }
+  .nest > .lbl{
+    position:absolute; top:-10px; left:14px; background:var(--panel);
+    padding:0 8px; font-size:12px; font-family:ui-monospace,monospace; color:var(--muted); font-weight:700;
+  }
+  .nest.l1{border-color:var(--accent)} .nest.l1>.lbl{color:var(--accent)}
+  .nest.l2{border-color:var(--purple)} .nest.l2>.lbl{color:var(--purple)}
+  .nest.l3{border-color:var(--green)}  .nest.l3>.lbl{color:var(--green)}
+  .nest.l4{border-color:var(--amber)}  .nest.l4>.lbl{color:var(--amber)}
+  .tree{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13px; line-height:1.85; white-space:pre; color:var(--ink)}
+  .tree .c{color:var(--muted)}
+  .tree .f{color:var(--accent); font-weight:600}
+  .badge{
+    display:inline-block; font-size:11px; font-weight:700; letter-spacing:.04em;
+    padding:2px 8px; border-radius:20px; text-transform:uppercase;
+  }
+  .b-acc{background:var(--accent-soft); color:var(--accent)}
+  .b-grn{background:var(--green-soft); color:var(--green)}
+  .b-amb{background:var(--amber-soft); color:var(--amber)}
+  .b-pur{background:var(--purple-soft); color:var(--purple)}
+  .toc{columns:2; column-gap:32px}
+  .toc a{display:block; color:var(--ink); text-decoration:none; padding:4px 0; font-size:14.5px; break-inside:avoid}
+  .toc a:hover{color:var(--accent)}
+  .toc .num{color:var(--muted); font-family:ui-monospace,monospace; font-size:12px; margin-right:8px}
+  @media(max-width:640px){ .toc{columns:1} }
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:700px){ .grid2{grid-template-columns:1fr} }
+  hr{border:none; border-top:1px solid var(--line); margin:40px 0}
+  details{border:1px solid var(--line); border-radius:10px; padding:12px 16px; margin:10px 0; background:var(--panel)}
+  summary{cursor:pointer; font-weight:600}
+  .q{margin-top:8px; color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">Learning notes · built from your own code</p>
+  <h1>The Hotel Booking App, explained</h1>
+  <p class="lead">Every React concept your project uses — what it is, why it's there, and the exact line in your repo that proves it. Read top to bottom once, then use it as a reference.</p>
+</header>
+
+<div class="card">
+  <h4 style="margin-top:0">Contents</h4>
+  <nav class="toc">
+    <a href="#big"><span class="num">01</span>The big picture</a>
+    <a href="#stack"><span class="num">02</span>The tech stack</a>
+    <a href="#boot"><span class="num">03</span>How the app boots</a>
+    <a href="#tree"><span class="num">04</span>Folder structure</a>
+    <a href="#jsx"><span class="num">05</span>JSX</a>
+    <a href="#comp"><span class="num">06</span>Components &amp; props</a>
+    <a href="#state"><span class="num">07</span>State — useState</a>
+    <a href="#events"><span class="num">08</span>Events &amp; forms</a>
+    <a href="#render"><span class="num">09</span>Conditional rendering</a>
+    <a href="#lists"><span class="num">10</span>Lists &amp; keys</a>
+    <a href="#immut"><span class="num">11</span>Immutability</a>
+    <a href="#effect"><span class="num">12</span>useEffect &amp; cleanup</a>
+    <a href="#memo"><span class="num">13</span>useMemo</a>
+    <a href="#lift"><span class="num">14</span>Lifting state up</a>
+    <a href="#context"><span class="num">15</span>Context API</a>
+    <a href="#hooks"><span class="num">16</span>Custom hooks</a>
+    <a href="#router"><span class="num">17</span>React Router</a>
+    <a href="#nested"><span class="num">18</span>Nested routes &amp; Outlet</a>
+    <a href="#url"><span class="num">19</span>URL as state</a>
+    <a href="#keyreset"><span class="num">20</span>key to reset a component</a>
+    <a href="#clerk"><span class="num">21</span>Third-party providers (Clerk)</a>
+    <a href="#vite"><span class="num">22</span>Vite, env vars, assets</a>
+    <a href="#tw"><span class="num">23</span>Tailwind CSS</a>
+    <a href="#flows"><span class="num">24</span>The three flows, end to end</a>
+    <a href="#lifecycle"><span class="num">25</span>The render lifecycle</a>
+    <a href="#gaps"><span class="num">26</span>What's missing &amp; what's next</a>
+    <a href="#quiz"><span class="num">27</span>Check yourself</a>
+  </nav>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="big">01 · The big picture</h2>
+
+<p>You built a <b>single-page application (SPA)</b>. That means the browser downloads <em>one</em> HTML file and one JavaScript bundle, and from then on JavaScript swaps the content on screen. Clicking "Hotels" never asks the server for a new page — React just renders different components.</p>
+
+<p>The app has <b>two sides</b>:</p>
+
+<div class="diagram">
+  <div class="row" style="align-items:stretch; gap:24px">
+    <div class="col" style="flex:1; min-width:260px">
+      <div class="box acc" style="width:100%"><b>Guest side</b><small>anyone visiting</small></div>
+      <div class="arrow">↓</div>
+      <div class="box" style="width:100%"><b>Home</b><small>hero + search + featured rooms</small></div>
+      <div class="arrow">↓</div>
+      <div class="box" style="width:100%"><b>All Rooms</b><small>filter, sort, search by city</small></div>
+      <div class="arrow">↓</div>
+      <div class="box" style="width:100%"><b>Room Details</b><small>pick dates → check availability → book</small></div>
+      <div class="arrow">↓</div>
+      <div class="box" style="width:100%"><b>My Bookings</b><small>pay or cancel</small></div>
+    </div>
+    <div class="col" style="flex:1; min-width:260px">
+      <div class="box pur" style="width:100%"><b>Owner side</b><small>after registering a hotel</small></div>
+      <div class="arrow">↓</div>
+      <div class="box" style="width:100%"><b>Register Hotel</b><small>modal form → becomes owner</small></div>
+      <div class="arrow">↓</div>
+      <div class="box" style="width:100%"><b>Dashboard</b><small>total bookings + revenue</small></div>
+      <div class="arrow">↓</div>
+      <div class="box" style="width:100%"><b>Add Room</b><small>images, price, amenities</small></div>
+      <div class="arrow">↓</div>
+      <div class="box" style="width:100%"><b>List Room</b><small>toggle availability on/off</small></div>
+    </div>
+  </div>
+  <p class="cap">Two experiences, one React app. Both read and write the <b>same shared state</b>.</p>
+</div>
+
+<div class="note">
+  <p><b>The single most important idea:</b> the room a guest books and the room an owner adds are the <em>same array in memory</em>. Add a room in the owner dashboard, then open <span class="file">/rooms</span> — it's there. That's shared state, and it's what Context gives you.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="stack">02 · The tech stack</h2>
+
+<div class="scroll">
+<table>
+  <tr><th>Tool</th><th>Version</th><th>What it does for you</th></tr>
+  <tr><td><b>React</b></td><td>19</td><td>Turns your JavaScript state into DOM. You describe <em>what</em> the screen should look like; React figures out <em>how</em> to change it.</td></tr>
+  <tr><td><b>React DOM</b></td><td>19</td><td>The part of React that talks to the browser specifically (there's a separate one for native mobile).</td></tr>
+  <tr><td><b>React Router</b></td><td>7</td><td>Maps URLs to components. Gives you <code>&lt;Link&gt;</code>, <code>useNavigate</code>, <code>useParams</code>, nested layouts.</td></tr>
+  <tr><td><b>Vite</b></td><td>8</td><td>Dev server with instant hot reload + the production bundler. Replaces the old Create React App / webpack setup.</td></tr>
+  <tr><td><b>Tailwind CSS</b></td><td>4</td><td>Utility classes written directly in JSX. No separate <span class="file">.css</span> file per component.</td></tr>
+  <tr><td><b>Clerk</b></td><td>6</td><td>Drop-in authentication: sign-in modal, user profile button, session handling.</td></tr>
+  <tr><td><b>ESLint</b></td><td>10</td><td>Catches bugs before you run the app — especially the React Hooks rules.</td></tr>
+</table>
+</div>
+
+<p>Note what is <b>not</b> here: there is no backend, no database, no <code>fetch</code>. All data lives in <span class="file">src/assets/assets.js</span> as dummy arrays and in React state. That's deliberate for a learning project — it lets you master the front end without also fighting a server. (<a href="#gaps">Section 26</a> covers how you'd add one.)</p>
+
+<!-- ============================================================ -->
+<h2 id="boot">03 · How the app boots</h2>
+
+<p>Follow the chain from the file the browser downloads to the pixels on screen.</p>
+
+<div class="diagram">
+  <div class="col">
+    <div class="box"><b>index.html</b><small>has one line that matters: &lt;div id="root"&gt;&lt;/div&gt;</small></div>
+    <div class="arrow">↓ &nbsp;loads the module script</div>
+    <div class="box acc"><b>src/main.jsx</b><small>createRoot(#root).render(...)</small></div>
+    <div class="arrow">↓ &nbsp;wraps App in three providers</div>
+    <div class="box pur"><b>src/App.jsx</b><small>Navbar + &lt;Routes&gt; + Footer</small></div>
+    <div class="arrow">↓ &nbsp;matches the current URL</div>
+    <div class="box grn"><b>a page component</b><small>Home / AllRooms / RoomDetails / …</small></div>
+  </div>
+  <p class="cap">The boot chain. Everything you see is under <code>#root</code>.</p>
+</div>
+
+<h3>Why <code>index.html</code> is nearly empty</h3>
+<pre><code><span class="tok-tag">&lt;body&gt;</span>
+  <span class="tok-tag">&lt;div</span> <span class="tok-attr">id</span>=<span class="tok-str">"root"</span><span class="tok-tag">&gt;&lt;/div&gt;</span>
+  <span class="tok-tag">&lt;script</span> <span class="tok-attr">type</span>=<span class="tok-str">"module"</span> <span class="tok-attr">src</span>=<span class="tok-str">"/src/main.jsx"</span><span class="tok-tag">&gt;&lt;/script&gt;</span>
+<span class="tok-tag">&lt;/body&gt;</span></code></pre>
+<p>That empty div is the <b>mount point</b>. React takes ownership of it and builds the entire UI inside. If JavaScript fails to load, the user sees a blank page — that's the trade-off of an SPA.</p>
+
+<h3>The provider sandwich in <span class="file">main.jsx</span></h3>
+
+<div class="diagram">
+  <div class="nest l1"><span class="lbl">&lt;BrowserRouter&gt;</span>
+    <p style="margin:4px 0 10px; font-size:13px; color:var(--muted)">gives everything below it access to the URL + navigation</p>
+    <div class="nest l2"><span class="lbl">&lt;ClerkProvider&gt;</span>
+      <p style="margin:4px 0 10px; font-size:13px; color:var(--muted)">gives everything below it access to the logged-in user</p>
+      <div class="nest l3"><span class="lbl">&lt;AppProvider&gt;</span>
+        <p style="margin:4px 0 10px; font-size:13px; color:var(--muted)">gives everything below it rooms, bookings, hotel, toasts</p>
+        <div class="nest l4"><span class="lbl">&lt;App /&gt;</span>
+          <p style="margin:4px 0 4px; font-size:13px; color:var(--muted)">…and every page and component you wrote</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cap">Order matters: <code>AppProvider</code> calls <code>useNavigate()</code> and <code>useUser()</code>, so it <em>must</em> sit inside both Router and Clerk.</p>
+</div>
+
+<div class="warn">
+  <p><b>A real bug you'd hit if you reordered these:</b> put <code>&lt;AppProvider&gt;</code> outside <code>&lt;BrowserRouter&gt;</code> and the app crashes, because <code>useNavigate()</code> has no router to talk to. Provider nesting is not decoration — it's a dependency graph.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="tree">04 · Folder structure &amp; why it's organised this way</h2>
+
+<div class="diagram">
+<div class="tree"><span class="c">client/</span>
+├── index.html            <span class="c">← the only real HTML page</span>
+├── vite.config.js        <span class="c">← plugins: react + tailwind</span>
+├── package.json          <span class="c">← deps and npm scripts</span>
+└── src/
+    ├── <span class="f">main.jsx</span>           <span class="c">← entry point, mounts React</span>
+    ├── <span class="f">App.jsx</span>            <span class="c">← shell + route table</span>
+    ├── index.css         <span class="c">← Tailwind import + fonts + theme colors</span>
+    │
+    ├── assets/           <span class="c">← images, icons, and dummy data</span>
+    │   └── assets.js     <span class="c">← exports assets, cities, roomsDummyData …</span>
+    │
+    ├── context/          <span class="c">← the app's shared "brain"</span>
+    │   ├── AppContext.js     <span class="c">createContext(null)</span>
+    │   ├── AppProvider.jsx   <span class="c">all the state + all the actions</span>
+    │   ├── useAppContext.js  <span class="c">the custom hook to read it</span>
+    │   └── booking.js        <span class="c">pure helpers: nightsBetween, createId</span>
+    │
+    ├── components/       <span class="c">← reusable pieces, no URL of their own</span>
+    │   ├── Navbar.jsx  Hero.jsx  Footer.jsx  HotelCard.jsx
+    │   ├── Title.jsx  StarRating.jsx  HotelReg.jsx
+    │   ├── FeaturedDestination.jsx  ExclusiveOffer.jsx
+    │   ├── Testimonial.jsx  NewsLetter.jsx
+    │   └── hotelOwner/   <span class="c">owner-only Navbar + Sidebar</span>
+    │
+    └── pages/            <span class="c">← one file per route</span>
+        ├── Home.jsx  AllRooms.jsx  RoomDetails.jsx
+        ├── MyBookings.jsx  NotFound.jsx
+        └── hotelOwner/
+            ├── Layout.jsx    <span class="c">the owner shell (Navbar + Sidebar + Outlet)</span>
+            ├── Dashboard.jsx  AddRoom.jsx  ListRoom.jsx</div>
+  <p class="cap">The rule that keeps this clean: <b>pages</b> map to URLs, <b>components</b> don't.</p>
+</div>
+
+<div class="tip">
+  <p><b>Why <code>context/</code> is split into four files.</b> React Fast Refresh (the hot-reload that keeps your state when you save) only works reliably if a file exports <em>only components</em>. Putting <code>createContext</code> and the <code>useAppContext</code> hook in their own files keeps <span class="file">AppProvider.jsx</span> component-only. This is also what the <code>react-refresh/only-export-components</code> ESLint rule enforces.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="jsx">05 · JSX — HTML-shaped JavaScript</h2>
+
+<p>JSX is not HTML and it's not a template language. It is <b>syntax sugar for function calls</b>. Vite compiles this:</p>
+
+<pre><code><span class="tok-tag">&lt;p</span> <span class="tok-attr">className</span>=<span class="tok-str">"text-gray-500"</span><span class="tok-tag">&gt;</span>{room.hotel.city}<span class="tok-tag">&lt;/p&gt;</span></code></pre>
+<p>into roughly this:</p>
+<pre><code><span class="tok-fn">jsx</span>(<span class="tok-str">'p'</span>, { className: <span class="tok-str">'text-gray-500'</span>, children: room.hotel.city })</code></pre>
+
+<p>That's why the rules are what they are:</p>
+
+<div class="scroll">
+<table>
+  <tr><th>Rule</th><th>Reason</th><th>In your code</th></tr>
+  <tr><td><code>className</code> not <code>class</code></td><td><code>class</code> is a reserved JS keyword</td><td>everywhere</td></tr>
+  <tr><td><code>htmlFor</code> not <code>for</code></td><td>same reason</td><td><span class="file">Hero.jsx</span> labels</td></tr>
+  <tr><td>One root element per return</td><td>a function returns one value</td><td>every component</td></tr>
+  <tr><td><code>{ }</code> escapes into JS</td><td>anything inside is an expression</td><td><code>{currency}{room.pricePerNight}</code></td></tr>
+  <tr><td>Tags must self-close</td><td><code>&lt;img /&gt;</code>, <code>&lt;input /&gt;</code></td><td><span class="file">HotelCard.jsx</span></td></tr>
+  <tr><td>Component names start uppercase</td><td>lowercase = a DOM tag, uppercase = your component</td><td><code>&lt;StarRating /&gt;</code> vs <code>&lt;div&gt;</code></td></tr>
+</table>
+</div>
+
+<p>Inside <code>{ }</code> you can put an <b>expression</b>, never a statement. That's why you see ternaries and <code>&amp;&amp;</code> instead of <code>if</code>:</p>
+
+<pre><code><span class="tok-com">// works — a ternary is an expression</span>
+{booking.isPaid ? <span class="tok-str">"Paid"</span> : <span class="tok-str">"Unpaid"</span>}
+
+<span class="tok-com">// does NOT work — if is a statement</span>
+{<span class="tok-key">if</span> (booking.isPaid) ...}</code></pre>
+
+<p>Template literals let you build class strings conditionally — this pattern is all over your Navbar:</p>
+<pre><code>className={`fixed top-0 w-full ${isScrolled ? <span class="tok-str">"bg-white/80 shadow-md"</span> : <span class="tok-str">"py-4"</span>}`}</code></pre>
+
+<!-- ============================================================ -->
+<h2 id="comp">06 · Components &amp; props</h2>
+
+<p>A component is a <b>function that takes props and returns JSX</b>. That's the whole definition. Props are the function's parameters — data flowing <em>down</em> from parent to child.</p>
+
+<p>Your <span class="file">Title.jsx</span> is the cleanest example in the project:</p>
+
+<pre><code><span class="tok-key">const</span> <span class="tok-fn">Title</span> = ({ title, subTitle, align, font }) =&gt; (
+  <span class="tok-tag">&lt;div</span> <span class="tok-attr">className</span>={`flex flex-col items-center text-center
+    ${align === <span class="tok-str">"left"</span> &amp;&amp; <span class="tok-str">"md:items-start md:text-left"</span>}`}<span class="tok-tag">&gt;</span>
+    <span class="tok-tag">&lt;h1</span> <span class="tok-attr">className</span>={`text-4xl ${font || <span class="tok-str">"font-playfair"</span>}`}<span class="tok-tag">&gt;</span>{title}<span class="tok-tag">&lt;/h1&gt;</span>
+    <span class="tok-tag">&lt;p</span> <span class="tok-attr">className</span>=<span class="tok-str">"text-sm text-gray-500/90 mt-2"</span><span class="tok-tag">&gt;</span>{subTitle}<span class="tok-tag">&lt;/p&gt;</span>
+  <span class="tok-tag">&lt;/div&gt;</span>
+);</code></pre>
+
+<p>Written once, used five ways across the app:</p>
+<pre><code><span class="tok-tag">&lt;Title</span> <span class="tok-attr">title</span>=<span class="tok-str">"Featured Destination"</span> <span class="tok-attr">subTitle</span>=<span class="tok-str">"Discover our handpicked…"</span> <span class="tok-tag">/&gt;</span>
+<span class="tok-tag">&lt;Title</span> <span class="tok-attr">align</span>=<span class="tok-str">"left"</span> <span class="tok-attr">font</span>=<span class="tok-str">"outfit"</span> <span class="tok-attr">title</span>=<span class="tok-str">"Dashboard"</span> <span class="tok-attr">subTitle</span>=<span class="tok-str">"Monitor your…"</span> <span class="tok-tag">/&gt;</span></code></pre>
+
+<h3>Four props patterns you used</h3>
+
+<div class="grid2">
+  <div class="card" style="margin:0">
+    <span class="badge b-acc">Destructuring</span>
+    <p style="font-size:14px">You unpack props right in the parameter list: <code>({ room, index })</code>. Cleaner than <code>props.room</code> everywhere.</p>
+    <p style="font-size:13px; color:var(--muted)">See <span class="file">HotelCard.jsx</span></p>
+  </div>
+  <div class="card" style="margin:0">
+    <span class="badge b-grn">Default values</span>
+    <p style="font-size:14px"><code>({ rating = 4 })</code> in StarRating and <code>({ selected = false, onChange = () =&gt; {} })</code> in the CheckBox — the component works even if a prop is forgotten.</p>
+    <p style="font-size:13px; color:var(--muted)">See <span class="file">StarRating.jsx</span>, <span class="file">AllRooms.jsx</span></p>
+  </div>
+  <div class="card" style="margin:0">
+    <span class="badge b-pur">children</span>
+    <p style="font-size:14px"><code>AppProvider({ children })</code> — whatever you wrap gets rendered in the slot. This is how every provider and layout works.</p>
+    <p style="font-size:13px; color:var(--muted)">See <span class="file">AppProvider.jsx</span></p>
+  </div>
+  <div class="card" style="margin:0">
+    <span class="badge b-amb">Function props</span>
+    <p style="font-size:14px"><code>onChange</code> is a <em>function</em> passed down. The child calls it; the parent decides what happens. Data down, events up.</p>
+    <p style="font-size:13px; color:var(--muted)">See the CheckBox/RadioButton in <span class="file">AllRooms.jsx</span></p>
+  </div>
+</div>
+
+<div class="warn">
+  <p><b>Props are read-only.</b> A child must never do <code>room.pricePerNight = 500</code>. If a child needs to change something, the parent passes down a function to call. That one-way flow is why React apps stay predictable as they grow.</p>
+</div>
+
+<h3>Component tree of your Home page</h3>
+<div class="diagram">
+<div class="tree"><span class="f">App</span>
+├── <span class="f">Navbar</span>            <span class="c">reads: isOwner, setShowHotelReg, Clerk user</span>
+├── <span class="f">HotelReg</span>          <span class="c">only when showHotelReg === true</span>
+├── <span class="f">Home</span>
+│   ├── <span class="f">Hero</span>          <span class="c">search form → navigates to /rooms?destination=…</span>
+│   ├── <span class="f">FeaturedDestination</span>
+│   │   ├── <span class="f">Title</span>
+│   │   └── <span class="f">HotelCard</span> ×4 <span class="c">from rooms.slice(0, 4)</span>
+│   ├── <span class="f">ExclusiveOffer</span>
+│   ├── <span class="f">Testimonial</span> → <span class="f">StarRating</span>
+│   └── <span class="f">NewsLetter</span>
+└── <span class="f">Footer</span></div>
+  <p class="cap">Composition: small components stacked into bigger ones. No component here is longer than it needs to be.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="state">07 · State — <code>useState</code></h2>
+
+<p><b>Props come from outside; state is owned by the component.</b> State is memory that survives re-renders, and changing it tells React to re-render.</p>
+
+<pre><code><span class="tok-key">const</span> [destination, setDestination] = <span class="tok-fn">useState</span>(<span class="tok-str">""</span>);
+<span class="tok-com">//     ↑ current value  ↑ the only way to change it   ↑ initial value</span></code></pre>
+
+<p>Your <span class="file">Hero.jsx</span> holds four pieces of state, one per form field:</p>
+<pre><code><span class="tok-key">const</span> [destination, setDestination] = <span class="tok-fn">useState</span>(<span class="tok-str">""</span>);
+<span class="tok-key">const</span> [checkIn,     setCheckIn]     = <span class="tok-fn">useState</span>(<span class="tok-str">""</span>);
+<span class="tok-key">const</span> [checkOut,    setCheckOut]    = <span class="tok-fn">useState</span>(<span class="tok-str">""</span>);
+<span class="tok-key">const</span> [guests,      setGuests]      = <span class="tok-fn">useState</span>(<span class="tok-int">1</span>);</code></pre>
+
+<div class="diagram">
+  <div class="row">
+    <div class="box"><b>User types</b><small>onChange fires</small></div>
+    <span class="arrow">→</span>
+    <div class="box acc"><b>setDestination("Dubai")</b><small>state is queued</small></div>
+    <span class="arrow">→</span>
+    <div class="box pur"><b>React re-renders</b><small>Hero() runs again</small></div>
+    <span class="arrow">→</span>
+    <div class="box grn"><b>Input shows "Dubai"</b><small>value={destination}</small></div>
+  </div>
+  <p class="cap">The state loop. Every interaction in your app is a lap around this circle.</p>
+</div>
+
+<h3>Three things about <code>useState</code> that trip everyone up</h3>
+
+<p><b>1. Setting state does not change the variable immediately.</b></p>
+<pre><code><span class="tok-fn">setGuests</span>(<span class="tok-int">3</span>);
+<span class="tok-fn">console</span>.log(guests); <span class="tok-com">// still the OLD value — this render's `guests` is a const</span></code></pre>
+<p>The new value shows up on the <em>next</em> render. Think of a re-render as calling your component function again with fresh values.</p>
+
+<p><b>2. Use the updater function when the new value depends on the old one.</b> You did this correctly everywhere in <span class="file">AppProvider.jsx</span>:</p>
+<pre><code><span class="tok-fn">setRooms</span>((prev) =&gt; [room, ...prev]);          <span class="tok-com">// ✅ safe</span>
+<span class="tok-fn">setRooms</span>([room, ...rooms]);                   <span class="tok-com">// ⚠️ can use a stale `rooms`</span></code></pre>
+
+<p><b>3. Lazy initial state</b> — your Navbar uses the function form so <code>window.scrollY</code> is only read once, not on every render:</p>
+<pre><code><span class="tok-key">const</span> [atTop, setAtTop] = <span class="tok-fn">useState</span>(() =&gt; window.scrollY &lt;= <span class="tok-int">10</span>);</code></pre>
+
+<h3>State inventory of your app</h3>
+<div class="scroll">
+<table>
+  <tr><th>Where</th><th>State</th><th>Why it lives there</th></tr>
+  <tr><td><span class="file">AppProvider</span></td><td>rooms, bookings, hotel, isOwner, showHotelReg, searchedCities, toast</td><td>Multiple far-apart components need it → global</td></tr>
+  <tr><td><span class="file">Hero</span></td><td>destination, checkIn, checkOut, guests</td><td>Only the search form cares → local</td></tr>
+  <tr><td><span class="file">AllRooms</span></td><td>openFilters, selectedRoomTypes, selectedPriceRanges, sortOption</td><td>Only this page's filter panel cares → local</td></tr>
+  <tr><td><span class="file">RoomDetails</span></td><td>mainImage, checkInDate, checkOutDate, guests, availability</td><td>Resets when you view another room → local</td></tr>
+  <tr><td><span class="file">Navbar</span></td><td>atTop, isMenuOpen</td><td>Pure UI concerns → local</td></tr>
+  <tr><td><span class="file">AddRoom</span></td><td>images, inputs</td><td>Draft form data, discarded on submit → local</td></tr>
+</table>
+</div>
+
+<div class="tip">
+  <p><b>The rule you followed instinctively:</b> keep state as <em>local</em> as possible. Move it up only when a second component genuinely needs it. Putting <code>isMenuOpen</code> in Context would work — and would make the whole app re-render every time you open the mobile menu.</p>
+</div>
+
+<h3>Object state: the AddRoom pattern</h3>
+<p>Instead of five separate <code>useState</code> calls, <span class="file">AddRoom.jsx</span> groups related fields into one object — and note how updates must <b>copy then override</b>:</p>
+<pre><code><span class="tok-key">const</span> [inputs, setInputs] = <span class="tok-fn">useState</span>({
+  roomType: <span class="tok-str">""</span>,
+  pricePerNight: <span class="tok-str">""</span>,
+  amenities: { <span class="tok-str">"Free WiFi"</span>: <span class="tok-key">false</span>, <span class="tok-str">"Free Breakfast"</span>: <span class="tok-key">false</span>, <span class="tok-com">/* … */</span> },
+});
+
+<span class="tok-com">// toggling one nested amenity — spread at EVERY level you change</span>
+<span class="tok-fn">setInputs</span>((prev) =&gt; ({
+  ...prev,
+  amenities: { ...prev.amenities, [amenity]: !prev.amenities[amenity] },
+}));</code></pre>
+<div class="note"><p>Miss the inner <code>...prev.amenities</code> and you wipe out the other four checkboxes. Miss the outer <code>...prev</code> and you lose roomType and price.</p></div>
+
+<!-- ============================================================ -->
+<h2 id="events">08 · Events &amp; controlled forms</h2>
+
+<p>React events look like DOM events but are <b>synthetic</b> — React wraps them for cross-browser consistency. You attach them as props, camelCased: <code>onClick</code>, <code>onChange</code>, <code>onSubmit</code>, <code>onKeyDown</code>.</p>
+
+<h3>Controlled inputs</h3>
+<p>An input is "controlled" when React state is the single source of truth:</p>
+<pre><code><span class="tok-tag">&lt;input</span>
+  <span class="tok-attr">value</span>={destination}                              <span class="tok-com">// state → input</span>
+  <span class="tok-attr">onChange</span>={(e) =&gt; <span class="tok-fn">setDestination</span>(e.target.value)}  <span class="tok-com">// input → state</span>
+<span class="tok-tag">/&gt;</span></code></pre>
+
+<div class="diagram">
+  <div class="row">
+    <div class="box acc"><b>state</b><small>destination = "Du"</small></div>
+    <span class="arrow">→</span>
+    <div class="box"><b>&lt;input value&gt;</b><small>shows "Du"</small></div>
+    <span class="arrow">→</span>
+    <div class="box amb"><b>user types "b"</b><small>onChange(e)</small></div>
+    <span class="arrow">↻</span>
+    <div class="box acc"><b>setDestination("Dub")</b></div>
+  </div>
+  <p class="cap">A closed loop. The DOM never holds truth the state doesn't know about.</p>
+</div>
+
+<h3>Form submission</h3>
+<p>Every form in your app calls <code>event.preventDefault()</code> first. Without it, the browser does a full page reload and your SPA restarts:</p>
+<pre><code><span class="tok-key">const</span> <span class="tok-fn">handleSearch</span> = (event) =&gt; {
+  event.<span class="tok-fn">preventDefault</span>();          <span class="tok-com">// ← stop the browser's default submit</span>
+  <span class="tok-fn">rememberCity</span>(destination.<span class="tok-fn">trim</span>());
+  <span class="tok-key">const</span> params = <span class="tok-key">new</span> <span class="tok-fn">URLSearchParams</span>();
+  <span class="tok-key">if</span> (destination.<span class="tok-fn">trim</span>()) params.<span class="tok-fn">set</span>(<span class="tok-str">"destination"</span>, destination.<span class="tok-fn">trim</span>());
+  <span class="tok-fn">navigate</span>(`/rooms?${params.<span class="tok-fn">toString</span>()}`);
+};</code></pre>
+
+<h3>Smart form details you got right</h3>
+<ul>
+  <li><b>Linked date inputs</b> — picking a check-in date later than check-out clears the check-out (<span class="file">Hero.jsx:84</span>, <span class="file">RoomDetails.jsx:149</span>).</li>
+  <li><b>Dynamic <code>min</code></b> — <code>min={checkInDate || today()}</code> makes invalid ranges unpickable in the calendar itself.</li>
+  <li><b>Disabled until valid</b> — the check-out input is <code>disabled={!checkInDate}</code>.</li>
+  <li><b>Event bubbling stopped</b> — in <span class="file">HotelReg.jsx</span> the overlay has <code>onClick={close}</code> but the form has <code>onClick={(e) =&gt; e.stopPropagation()}</code>, so clicking <em>inside</em> the dialog doesn't close it. That's a classic modal pattern.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="render">09 · Conditional rendering</h2>
+
+<p>Four techniques, all present in your code:</p>
+
+<div class="scroll">
+<table>
+  <tr><th>Technique</th><th>Example from your code</th><th>Use when</th></tr>
+  <tr><td><code>&amp;&amp;</code></td><td><code>{showHotelReg &amp;&amp; &lt;HotelReg /&gt;}</code></td><td>show or show nothing</td></tr>
+  <tr><td><code>? :</code></td><td><code>{isOwner ? "Dashboard" : "List Your Hotel"}</code></td><td>one of two things</td></tr>
+  <tr><td>Early <code>return</code></td><td><code>if (rooms.length === 0) return null;</code> in FeaturedDestination</td><td>skip the whole component</td></tr>
+  <tr><td>Ternary block</td><td><code>{bookings.length === 0 ? &lt;EmptyState/&gt; : &lt;Table/&gt;}</code></td><td>two full layouts</td></tr>
+</table>
+</div>
+
+<div class="warn">
+  <p><b>The <code>&amp;&amp;</code> gotcha:</b> <code>{items.length &amp;&amp; &lt;List/&gt;}</code> renders a literal <b>0</b> on screen when the array is empty, because <code>0</code> is falsy but still a valid React child. Always compare explicitly: <code>{items.length &gt; 0 &amp;&amp; …}</code>. Your <span class="file">Hero.jsx:128</span> does this correctly.</p>
+</div>
+
+<h3>Conditional layout: the owner-vs-guest shell</h3>
+<p>Your <span class="file">App.jsx</span> hides the public chrome on owner routes with one boolean:</p>
+<pre><code><span class="tok-key">const</span> isOwnerPath = pathname.<span class="tok-fn">startsWith</span>(<span class="tok-str">"/owner"</span>);
+<span class="tok-com">// …</span>
+{!isOwnerPath &amp;&amp; <span class="tok-tag">&lt;Navbar /&gt;</span>}
+<span class="tok-com">// … routes …</span>
+{!isOwnerPath &amp;&amp; <span class="tok-tag">&lt;Footer /&gt;</span>}</code></pre>
+
+<h3>Empty states</h3>
+<p>You wrote an empty state for <em>every</em> list — no rooms match filters, no bookings yet, no rooms listed, no bookings on the dashboard. This is a genuine UX habit most tutorials skip. An empty table with headers and no rows looks broken; a friendly message with a "Browse Rooms" button doesn't.</p>
+
+<!-- ============================================================ -->
+<h2 id="lists">10 · Rendering lists &amp; the <code>key</code> prop</h2>
+
+<p>You render arrays with <code>.map()</code>, which turns each data item into an element:</p>
+<pre><code>{filteredRooms.<span class="tok-fn">map</span>((room) =&gt; (
+  <span class="tok-tag">&lt;div</span> <span class="tok-attr">key</span>={room._id}<span class="tok-tag">&gt;</span>
+    <span class="tok-tag">&lt;img</span> <span class="tok-attr">src</span>={room.images[<span class="tok-int">0</span>]} <span class="tok-attr">alt</span>={`${room.hotel.name} room`} <span class="tok-tag">/&gt;</span>
+    <span class="tok-tag">&lt;p&gt;</span>{room.hotel.name}<span class="tok-tag">&lt;/p&gt;</span>
+  <span class="tok-tag">&lt;/div&gt;</span>
+))}</code></pre>
+
+<h3>Why <code>key</code> is not optional</h3>
+<p><code>key</code> is React's identity tag for a list item. Without it React can only match items by position, and position lies the moment you insert, delete, or reorder.</p>
+
+<div class="diagram">
+  <div class="row" style="align-items:flex-start; gap:32px">
+    <div class="col" style="flex:1; min-width:230px">
+      <div class="box amb" style="width:100%"><b>key = index</b><small>❌ breaks on insert</small></div>
+      <div style="font-size:13px; color:var(--muted); margin-top:6px">Before: <code>[0:A, 1:B]</code></div>
+      <div class="arrow">↓ prepend C</div>
+      <div style="font-size:13px; color:var(--muted)">After: <code>[0:C, 1:A, 2:B]</code></div>
+      <p style="font-size:13px; margin:8px 0 0">React thinks item 0 just <em>changed text</em> from A to C, and reuses A's DOM node — carrying over scroll position, input values, focus.</p>
+    </div>
+    <div class="col" style="flex:1; min-width:230px">
+      <div class="box grn" style="width:100%"><b>key = room._id</b><small>✅ stable identity</small></div>
+      <div style="font-size:13px; color:var(--muted); margin-top:6px">Before: <code>[a1:A, b2:B]</code></div>
+      <div class="arrow">↓ prepend C</div>
+      <div style="font-size:13px; color:var(--muted)">After: <code>[c3:C, a1:A, b2:B]</code></div>
+      <p style="font-size:13px; margin:8px 0 0">React sees c3 is new and a1/b2 just moved. It <em>inserts</em> one node and leaves the others completely alone.</p>
+    </div>
+  </div>
+  <p class="cap">This matters concretely in your app: <code>addRoom</code> prepends with <code>[room, ...prev]</code>, and <code>bookRoom</code> does too.</p>
+</div>
+
+<p>This is exactly why <span class="file">booking.js</span> exists:</p>
+<pre><code><span class="tok-key">let</span> idCounter = <span class="tok-int">0</span>;
+<span class="tok-key">export const</span> <span class="tok-fn">createId</span> = (prefix) =&gt;
+  `${prefix}_${<span class="tok-fn">Date</span>.<span class="tok-fn">now</span>().<span class="tok-fn">toString</span>(<span class="tok-int">36</span>)}${idCounter++}`;</code></pre>
+<p>The timestamp alone isn't enough — two rooms added in the same millisecond would collide. The counter guarantees uniqueness. In a real app the database would hand you these ids.</p>
+
+<div class="note"><p>Index as key <em>is</em> acceptable when the list never reorders, never filters, and items have no state — which is why <code>key={index}</code> in <span class="file">StarRating.jsx</span> (always five fixed stars) is fine.</p></div>
+
+<!-- ============================================================ -->
+<h2 id="immut">11 · Immutability — the rule behind every state update</h2>
+
+<p>React decides whether to re-render by comparing the <em>reference</em> of old state to new state. Mutate an array in place and the reference is identical — React sees no change and your UI silently doesn't update.</p>
+
+<pre><code><span class="tok-com">// ❌ mutation — same array reference, React ignores it</span>
+rooms.<span class="tok-fn">push</span>(newRoom);
+<span class="tok-fn">setRooms</span>(rooms);
+
+<span class="tok-com">// ✅ new array every time</span>
+<span class="tok-fn">setRooms</span>((prev) =&gt; [newRoom, ...prev]);</code></pre>
+
+<h3>The four operations, as you wrote them</h3>
+<div class="scroll">
+<table>
+  <tr><th>Operation</th><th>Your code</th><th>Where</th></tr>
+  <tr><td><b>Add</b></td><td><code>setRooms((prev) =&gt; [room, ...prev])</code></td><td>addRoom</td></tr>
+  <tr><td><b>Update one</b></td><td><code>prev.map(r =&gt; r._id === id ? {...r, isAvailable: !r.isAvailable} : r)</code></td><td>toggleRoomAvailability</td></tr>
+  <tr><td><b>Remove</b></td><td><code>prev.filter(b =&gt; b._id !== bookingId)</code></td><td>cancelBooking</td></tr>
+  <tr><td><b>Update nested</b></td><td><code>{...prev, amenities: {...prev.amenities, [k]: v}}</code></td><td>AddRoom</td></tr>
+</table>
+</div>
+
+<div class="tip">
+  <p><b>Memorise these four.</b> <code>map</code> to update, <code>filter</code> to delete, spread to add, spread-at-every-level for nesting. Every React state update you ever write is one of these. Note they're all <em>non-mutating</em> array methods — <code>push</code>, <code>splice</code>, <code>sort</code>, and <code>reverse</code> all mutate, which is why <span class="file">AllRooms.jsx</span> writes <code>[...sorted].sort(...)</code> and not <code>sorted.sort(...)</code>.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="effect">12 · <code>useEffect</code> &amp; cleanup</h2>
+
+<p>Rendering must be pure: given the same props and state, produce the same JSX and touch nothing else. But real apps need to touch the outside world — scroll listeners, timers, the document body. <code>useEffect</code> is the escape hatch that runs <b>after</b> React has painted.</p>
+
+<pre><code><span class="tok-fn">useEffect</span>(() =&gt; {
+  <span class="tok-com">/* the effect */</span>
+  <span class="tok-key">return</span> () =&gt; { <span class="tok-com">/* the cleanup */</span> };
+}, [deps]);</code></pre>
+
+<div class="diagram">
+  <div class="row">
+    <div class="box"><b>[] </b><small>empty array</small></div>
+    <span class="arrow">→</span>
+    <div class="box grn"><b>runs once</b><small>on mount only</small></div>
+  </div>
+  <div class="row" style="margin-top:14px">
+    <div class="box"><b>[toast]</b><small>with deps</small></div>
+    <span class="arrow">→</span>
+    <div class="box acc"><b>runs on mount + whenever toast changes</b></div>
+  </div>
+  <div class="row" style="margin-top:14px">
+    <div class="box"><b>no array</b><small>omitted</small></div>
+    <span class="arrow">→</span>
+    <div class="box amb"><b>runs after EVERY render</b><small>almost always a bug</small></div>
+  </div>
+  <p class="cap">The dependency array is the whole API. Get it right and effects are simple.</p>
+</div>
+
+<h3>Every effect in your project, and why it needs cleanup</h3>
+
+<p><b>1. Scroll to top on navigation</b> — <span class="file">App.jsx:23</span></p>
+<pre><code><span class="tok-fn">useEffect</span>(() =&gt; {
+  window.<span class="tok-fn">scrollTo</span>(<span class="tok-int">0</span>, <span class="tok-int">0</span>);
+}, [pathname]);</code></pre>
+<p>Without this, navigating from the bottom of the room list to a detail page dumps you halfway down the new page. A router quirk every SPA has to fix. No cleanup needed — nothing was subscribed.</p>
+
+<p><b>2. Scroll listener</b> — <span class="file">Navbar.jsx:48</span></p>
+<pre><code><span class="tok-fn">useEffect</span>(() =&gt; {
+  <span class="tok-key">const</span> <span class="tok-fn">handleScroll</span> = () =&gt; <span class="tok-fn">setAtTop</span>(window.scrollY &lt;= <span class="tok-int">10</span>);
+  window.<span class="tok-fn">addEventListener</span>(<span class="tok-str">"scroll"</span>, handleScroll, { passive: <span class="tok-key">true</span> });
+  <span class="tok-key">return</span> () =&gt; window.<span class="tok-fn">removeEventListener</span>(<span class="tok-str">"scroll"</span>, handleScroll);
+}, []);</code></pre>
+<p>The cleanup is mandatory. Without it, every remount adds another listener that never goes away — a memory leak that gets slower over time.</p>
+
+<p><b>3. Lock body scroll while a modal or drawer is open</b> — <span class="file">Navbar.jsx:55</span> and <span class="file">HotelReg.jsx:16</span></p>
+<pre><code><span class="tok-fn">useEffect</span>(() =&gt; {
+  document.body.style.overflow = isMenuOpen ? <span class="tok-str">"hidden"</span> : <span class="tok-str">""</span>;
+  <span class="tok-key">return</span> () =&gt; { document.body.style.overflow = <span class="tok-str">""</span>; };
+}, [isMenuOpen]);</code></pre>
+<p>The cleanup matters here too: if the component unmounts while the menu is open, the page would stay permanently unscrollable.</p>
+
+<p><b>4. Auto-dismiss the toast</b> — <span class="file">AppProvider.jsx:27</span></p>
+<pre><code><span class="tok-fn">useEffect</span>(() =&gt; {
+  <span class="tok-key">if</span> (!toast) <span class="tok-key">return</span>;
+  <span class="tok-key">const</span> timer = <span class="tok-fn">setTimeout</span>(() =&gt; <span class="tok-fn">setToast</span>(<span class="tok-key">null</span>), <span class="tok-int">3500</span>);
+  <span class="tok-key">return</span> () =&gt; <span class="tok-fn">clearTimeout</span>(timer);
+}, [toast]);</code></pre>
+<p>The cleanup makes this <em>correct</em>, not just tidy. Trigger a second toast at 3 seconds: the cleanup cancels the first timer, so the new message gets its full 3.5 seconds instead of vanishing after 0.5.</p>
+
+<p><b>5. Escape key closes the dialog</b> — <span class="file">HotelReg.jsx:17</span></p>
+<pre><code><span class="tok-key">const</span> <span class="tok-fn">onKeyDown</span> = (event) =&gt; { <span class="tok-key">if</span> (event.key === <span class="tok-str">"Escape"</span>) <span class="tok-fn">setShowHotelReg</span>(<span class="tok-key">false</span>); };
+document.<span class="tok-fn">addEventListener</span>(<span class="tok-str">"keydown"</span>, onKeyDown);
+<span class="tok-key">return</span> () =&gt; document.<span class="tok-fn">removeEventListener</span>(<span class="tok-str">"keydown"</span>, onKeyDown);</code></pre>
+
+<div class="diagram">
+  <div class="row">
+    <div class="box acc"><b>Mount</b><small>effect runs</small></div>
+    <span class="arrow">→</span>
+    <div class="box"><b>Dep changes</b><small>cleanup runs, then effect runs again</small></div>
+    <span class="arrow">→</span>
+    <div class="box grn"><b>Unmount</b><small>cleanup runs one last time</small></div>
+  </div>
+  <p class="cap">The effect lifecycle. Cleanup is not "on unmount" — it's "before the next run <em>and</em> on unmount."</p>
+</div>
+
+<div class="warn">
+  <p><b>The most common misuse:</b> <code>useEffect</code> is not for deriving data. If a value can be calculated from existing state during render, calculate it during render. <span class="file">AllRooms.jsx</span> gets this right — <code>filteredRooms</code> is computed with <code>useMemo</code>, not stuffed into state by an effect. Effects are for <em>synchronising with things outside React</em>.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="memo">13 · <code>useMemo</code> — caching an expensive calculation</h2>
+
+<p><span class="file">AllRooms.jsx</span> filters by destination, room type, and price range, then sorts. That's four passes over the array, and it would re-run on <em>every</em> render — including when you just open the mobile filter drawer, which changes only <code>openFilters</code>.</p>
+
+<pre><code><span class="tok-key">const</span> filteredRooms = <span class="tok-fn">useMemo</span>(() =&gt; {
+  <span class="tok-key">const</span> <span class="tok-fn">matchesDestination</span> = (room) =&gt; { <span class="tok-com">/* … */</span> };
+  <span class="tok-key">const</span> <span class="tok-fn">matchesRoomType</span>    = (room) =&gt; { <span class="tok-com">/* … */</span> };
+  <span class="tok-key">const</span> <span class="tok-fn">matchesPrice</span>       = (room) =&gt; { <span class="tok-com">/* … */</span> };
+
+  <span class="tok-key">const</span> sorted = rooms.<span class="tok-fn">filter</span>((room) =&gt;
+    <span class="tok-fn">matchesDestination</span>(room) &amp;&amp; <span class="tok-fn">matchesRoomType</span>(room) &amp;&amp; <span class="tok-fn">matchesPrice</span>(room));
+
+  <span class="tok-key">if</span> (sortOption === <span class="tok-str">"Price Low to High"</span>)
+    <span class="tok-key">return</span> [...sorted].<span class="tok-fn">sort</span>((a, b) =&gt; a.pricePerNight - b.pricePerNight);
+  <span class="tok-com">// …</span>
+  <span class="tok-key">return</span> sorted;
+}, [rooms, destination, selectedRoomTypes, selectedPriceRanges, sortOption]);</code></pre>
+
+<p>React caches the result and only recomputes when one of those five dependencies changes. <code>openFilters</code> is deliberately absent from the array — toggling the drawer reuses the cached list.</p>
+
+<div class="diagram">
+  <div class="row" style="gap:8px">
+    <div class="box"><b>rooms</b></div><div class="box"><b>destination</b></div><div class="box"><b>roomTypes</b></div><div class="box"><b>priceRanges</b></div><div class="box"><b>sortOption</b></div>
+  </div>
+  <div class="row" style="margin:10px 0"><span class="arrow">↓ any one changes</span></div>
+  <div class="row"><div class="box acc"><b>recompute filteredRooms</b></div></div>
+  <div class="row" style="margin:10px 0"><span class="arrow">↓ otherwise</span></div>
+  <div class="row"><div class="box grn"><b>reuse the cached array</b><small>same reference, no work</small></div></div>
+  <p class="cap">Memoisation: trade a little memory for skipped work.</p>
+</div>
+
+<div class="note"><p><b>Don't reach for <code>useMemo</code> by default.</b> It has its own cost (storing the value, comparing deps). Use it for genuinely expensive work, or when a stable object reference matters. With ~10 dummy rooms this is more about learning the pattern than about real performance — which is a perfectly good reason to have it.</p></div>
+
+<!-- ============================================================ -->
+<h2 id="lift">14 · Lifting state up</h2>
+
+<p>When two components need the same data, the state moves to their closest common parent. This is the problem that eventually forces you into Context.</p>
+
+<div class="diagram">
+  <div class="row" style="align-items:flex-start; gap:30px">
+    <div class="col" style="flex:1; min-width:250px">
+      <p style="font-weight:700; margin:0 0 10px">The problem</p>
+      <div class="box" style="width:100%"><b>App</b></div>
+      <div class="arrow">↙&nbsp;&nbsp;&nbsp;&nbsp;↘</div>
+      <div class="row" style="gap:14px">
+        <div class="box amb"><b>RoomDetails</b><small>creates a booking</small></div>
+        <div class="box amb"><b>MyBookings</b><small>needs that booking</small></div>
+      </div>
+      <p style="font-size:13.5px">They're siblings. Neither can see the other's state.</p>
+    </div>
+    <div class="col" style="flex:1; min-width:250px">
+      <p style="font-weight:700; margin:0 0 10px">The fix</p>
+      <div class="box grn" style="width:100%"><b>AppProvider</b><small>owns bookings + bookRoom()</small></div>
+      <div class="arrow">↙&nbsp;&nbsp;&nbsp;&nbsp;↘</div>
+      <div class="row" style="gap:14px">
+        <div class="box"><b>RoomDetails</b><small>calls bookRoom()</small></div>
+        <div class="box"><b>MyBookings</b><small>reads bookings</small></div>
+      </div>
+      <p style="font-size:13.5px">State moves up to a shared ancestor; both read from there.</p>
+    </div>
+  </div>
+</div>
+
+<p><b>Prop drilling</b> is what happens if you lift state up but pass it down by hand:</p>
+<pre><code>App → Home → FeaturedDestination → HotelCard   <span class="tok-com">// just to hand over `currency`</span></code></pre>
+<p>Two of those components don't use <code>currency</code> at all; they're only couriers. Multiply by a dozen values and every component signature becomes noise. That's the pain Context removes.</p>
+
+<!-- ============================================================ -->
+<h2 id="context">15 · The Context API — your app's brain</h2>
+
+<p>Context creates a value that any descendant can read directly, no matter how deep, without a single intermediate prop.</p>
+
+<div class="diagram">
+  <div class="row" style="align-items:flex-start; gap:36px">
+    <div class="col" style="flex:1; min-width:240px">
+      <p style="font-weight:700;margin:0 0 8px">Without Context</p>
+      <div class="box" style="width:100%"><b>AppProvider</b><small>currency = "$"</small></div>
+      <div class="arrow">↓ prop</div>
+      <div class="box amb" style="width:100%"><b>Home</b><small>doesn't use it 😐</small></div>
+      <div class="arrow">↓ prop</div>
+      <div class="box amb" style="width:100%"><b>FeaturedDestination</b><small>doesn't use it 😐</small></div>
+      <div class="arrow">↓ prop</div>
+      <div class="box grn" style="width:100%"><b>HotelCard</b><small>finally uses it 🎉</small></div>
+    </div>
+    <div class="col" style="flex:1; min-width:240px">
+      <p style="font-weight:700;margin:0 0 8px">With Context</p>
+      <div class="box acc" style="width:100%"><b>AppProvider</b><small>value={{ currency, rooms, … }}</small></div>
+      <div class="arrow" style="font-size:14px">↓ &nbsp;&nbsp;(broadcast to all descendants)</div>
+      <div class="box" style="width:100%; opacity:.55"><b>Home</b><small>passes nothing</small></div>
+      <div class="arrow" style="opacity:.5">↓</div>
+      <div class="box" style="width:100%; opacity:.55"><b>FeaturedDestination</b><small>passes nothing</small></div>
+      <div class="arrow" style="opacity:.5">↓</div>
+      <div class="box grn" style="width:100%"><b>HotelCard</b><small>useAppContext() 🎉</small></div>
+    </div>
+  </div>
+  <p class="cap">Context is a wire that skips the middle. It doesn't replace props — it replaces <em>drilling</em>.</p>
+</div>
+
+<h3>The three pieces</h3>
+
+<p><b>1. Create the channel</b> — <span class="file">context/AppContext.js</span></p>
+<pre><code><span class="tok-key">import</span> { createContext } <span class="tok-key">from</span> <span class="tok-str">"react"</span>;
+<span class="tok-key">export const</span> AppContext = <span class="tok-fn">createContext</span>(<span class="tok-key">null</span>);</code></pre>
+
+<p><b>2. Provide a value</b> — <span class="file">context/AppProvider.jsx</span></p>
+<pre><code><span class="tok-key">const</span> value = { currency, navigate, rooms, bookings, hotel, isOwner,
+                addRoom, bookRoom, payBooking, cancelBooking, <span class="tok-com">/* … */</span> };
+
+<span class="tok-key">return</span> <span class="tok-tag">&lt;AppContext.Provider</span> <span class="tok-attr">value</span>={value}<span class="tok-tag">&gt;</span>{children}<span class="tok-tag">&lt;/AppContext.Provider&gt;</span>;</code></pre>
+
+<p><b>3. Consume it</b> — <span class="file">context/useAppContext.js</span></p>
+<pre><code><span class="tok-key">export const</span> <span class="tok-fn">useAppContext</span> = () =&gt; {
+  <span class="tok-key">const</span> context = <span class="tok-fn">useContext</span>(AppContext);
+  <span class="tok-key">if</span> (!context) <span class="tok-key">throw new</span> <span class="tok-fn">Error</span>(<span class="tok-str">"useAppContext must be used inside &lt;AppProvider&gt;"</span>);
+  <span class="tok-key">return</span> context;
+};</code></pre>
+
+<div class="tip">
+  <p><b>That guard clause is excellent practice.</b> Forget the provider and you get a clear error naming the exact problem, instead of a cryptic <code>Cannot destructure property 'rooms' of null</code> from somewhere deep in a component.</p>
+</div>
+
+<h3>What lives in your context</h3>
+<div class="scroll">
+<table>
+  <tr><th>Kind</th><th>Names</th><th>Notes</th></tr>
+  <tr><td><span class="badge b-acc">Data</span></td><td>rooms, bookings, hotel, isOwner, showHotelReg, searchedCities, currency, user, currentUser</td><td>The nouns of the app</td></tr>
+  <tr><td><span class="badge b-grn">Actions</span></td><td>registerHotel, addRoom, toggleRoomAvailability, bookRoom, payBooking, cancelBooking, rememberCity, notify</td><td>The verbs — every state mutation goes through one of these</td></tr>
+  <tr><td><span class="badge b-pur">Queries</span></td><td>isRoomAvailable, dashboard</td><td>Derived from data, computed on each render</td></tr>
+  <tr><td><span class="badge b-amb">Utilities</span></td><td>navigate, setIsOwner, setShowHotelReg</td><td>Convenience passthroughs</td></tr>
+</table>
+</div>
+
+<p><b>This shape is the important lesson.</b> Components never write to state directly — they call an action, and the action owns the rules. Look at <code>bookRoom</code>: it computes nights, calculates the total, stamps a status and timestamps, and generates an id. A component just says "book this room."</p>
+
+<pre><code><span class="tok-key">const</span> <span class="tok-fn">bookRoom</span> = ({ room, checkInDate, checkOutDate, guests }) =&gt; {
+  <span class="tok-key">const</span> nights = <span class="tok-fn">nightsBetween</span>(checkInDate, checkOutDate);
+  <span class="tok-key">const</span> booking = {
+    _id: <span class="tok-fn">createId</span>(<span class="tok-str">"booking"</span>),
+    user: currentUser, room, hotel: room.hotel,
+    totalPrice: room.pricePerNight * nights,
+    guests: <span class="tok-fn">Number</span>(guests),
+    status: <span class="tok-str">"pending"</span>, isPaid: <span class="tok-key">false</span>,
+    <span class="tok-com">/* … */</span>
+  };
+  <span class="tok-fn">setBookings</span>((prev) =&gt; [booking, ...prev]);
+  <span class="tok-key">return</span> booking;
+};</code></pre>
+
+<h3>Derived state: <code>dashboard</code></h3>
+<pre><code><span class="tok-key">const</span> dashboard = {
+  totalBookings: bookings.length,
+  totalRevenue: bookings.<span class="tok-fn">reduce</span>((sum, b) =&gt; sum + b.totalPrice, <span class="tok-int">0</span>),
+  bookings,
+};</code></pre>
+<p>Revenue is <b>not</b> stored in state. It's recalculated from bookings on every render. That's the right call: a stored total can drift out of sync with the list it summarises; a derived one physically can't.</p>
+
+<div class="warn">
+  <p><b>Context's one real cost:</b> when the provider's <code>value</code> changes, <em>every</em> consumer re-renders. Your <code>value</code> object is rebuilt on every AppProvider render, so any state change there re-renders every component using <code>useAppContext</code>. At this app's size that's invisible. At scale you'd split into multiple contexts (a rarely-changing one and a frequently-changing one) or wrap <code>value</code> in <code>useMemo</code>. Knowing the trade-off is what matters.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="hooks">16 · Custom hooks</h2>
+
+<p>A custom hook is just a function whose name starts with <code>use</code> and that calls other hooks. <code>useAppContext</code> is yours:</p>
+
+<pre><code><span class="tok-com">// without the custom hook — repeated in ~14 files</span>
+<span class="tok-key">const</span> { rooms } = <span class="tok-fn">useContext</span>(AppContext);
+
+<span class="tok-com">// with it — shorter, and it validates</span>
+<span class="tok-key">const</span> { rooms } = <span class="tok-fn">useAppContext</span>();</code></pre>
+
+<p>You get three things: less import noise, a single place to add the null check, and a seam — if you ever swap Context for Redux or Zustand, you change one file and no component notices.</p>
+
+<h4>The Rules of Hooks</h4>
+<ol>
+  <li><b>Only call hooks at the top level</b> — never inside an <code>if</code>, a loop, or a nested function. React tracks hooks by call order; conditional calls shuffle the order and corrupt state.</li>
+  <li><b>Only call hooks from React functions</b> — components or other custom hooks.</li>
+</ol>
+<p>The <code>eslint-plugin-react-hooks</code> in your <span class="file">eslint.config.js</span> enforces both, plus warns about missing effect dependencies. Take those warnings seriously — they're usually pointing at a real stale-closure bug.</p>
+
+<div class="note">
+  <p><b>Note the pattern in <span class="file">RoomDetails.jsx</span>:</b> the outer <code>RoomDetails</code> calls <code>useParams()</code> and <code>useAppContext()</code>, and only <em>then</em> can it early-return <code>&lt;NotFound /&gt;</code>. The hooks run before any conditional return — that's Rule 1 in practice.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="router">17 · React Router — URLs to components</h2>
+
+<p>Your entire route table, from <span class="file">App.jsx</span>:</p>
+
+<div class="scroll">
+<table>
+  <tr><th>URL</th><th>Renders</th><th>Concept shown</th></tr>
+  <tr><td><code>/</code></td><td>Home</td><td>index route</td></tr>
+  <tr><td><code>/rooms</code></td><td>AllRooms</td><td>static path</td></tr>
+  <tr><td><code>/rooms?destination=Dubai</code></td><td>AllRooms (filtered)</td><td>query string via <code>useSearchParams</code></td></tr>
+  <tr><td><code>/rooms/:id</code></td><td>RoomDetails</td><td>dynamic segment via <code>useParams</code></td></tr>
+  <tr><td><code>/my-bookings</code></td><td>MyBookings</td><td>static path</td></tr>
+  <tr><td><code>/owner</code></td><td>Layout → Dashboard</td><td>nested layout + index child</td></tr>
+  <tr><td><code>/owner/add-room</code></td><td>Layout → AddRoom</td><td>nested child</td></tr>
+  <tr><td><code>/owner/list-room</code></td><td>Layout → ListRoom</td><td>nested child</td></tr>
+  <tr><td>anything else</td><td>NotFound</td><td>catch-all <code>*</code></td></tr>
+</table>
+</div>
+
+<pre><code><span class="tok-tag">&lt;Routes&gt;</span>
+  <span class="tok-tag">&lt;Route</span> <span class="tok-attr">path</span>=<span class="tok-str">"/"</span> <span class="tok-attr">element</span>={<span class="tok-tag">&lt;Home /&gt;</span>} <span class="tok-tag">/&gt;</span>
+  <span class="tok-tag">&lt;Route</span> <span class="tok-attr">path</span>=<span class="tok-str">"/rooms"</span> <span class="tok-attr">element</span>={<span class="tok-tag">&lt;AllRooms /&gt;</span>} <span class="tok-tag">/&gt;</span>
+  <span class="tok-tag">&lt;Route</span> <span class="tok-attr">path</span>=<span class="tok-str">"/rooms/:id"</span> <span class="tok-attr">element</span>={<span class="tok-tag">&lt;RoomDetails /&gt;</span>} <span class="tok-tag">/&gt;</span>
+  <span class="tok-tag">&lt;Route</span> <span class="tok-attr">path</span>=<span class="tok-str">"/my-bookings"</span> <span class="tok-attr">element</span>={<span class="tok-tag">&lt;MyBookings /&gt;</span>} <span class="tok-tag">/&gt;</span>
+  <span class="tok-tag">&lt;Route</span> <span class="tok-attr">path</span>=<span class="tok-str">"/owner"</span> <span class="tok-attr">element</span>={<span class="tok-tag">&lt;Layout /&gt;</span>}<span class="tok-tag">&gt;</span>
+    <span class="tok-tag">&lt;Route</span> <span class="tok-attr">index</span> <span class="tok-attr">element</span>={<span class="tok-tag">&lt;Dashboard /&gt;</span>} <span class="tok-tag">/&gt;</span>
+    <span class="tok-tag">&lt;Route</span> <span class="tok-attr">path</span>=<span class="tok-str">"add-room"</span> <span class="tok-attr">element</span>={<span class="tok-tag">&lt;AddRoom /&gt;</span>} <span class="tok-tag">/&gt;</span>
+    <span class="tok-tag">&lt;Route</span> <span class="tok-attr">path</span>=<span class="tok-str">"list-room"</span> <span class="tok-attr">element</span>={<span class="tok-tag">&lt;ListRoom /&gt;</span>} <span class="tok-tag">/&gt;</span>
+  <span class="tok-tag">&lt;/Route&gt;</span>
+  <span class="tok-tag">&lt;Route</span> <span class="tok-attr">path</span>=<span class="tok-str">"*"</span> <span class="tok-attr">element</span>={<span class="tok-tag">&lt;NotFound /&gt;</span>} <span class="tok-tag">/&gt;</span>
+<span class="tok-tag">&lt;/Routes&gt;</span></code></pre>
+
+<h3>Navigating: the four tools</h3>
+<div class="scroll">
+<table>
+  <tr><th>Tool</th><th>What it is</th><th>Use it when</th><th>Your usage</th></tr>
+  <tr><td><code>&lt;Link&gt;</code></td><td>Renders a real <code>&lt;a&gt;</code>, intercepts the click</td><td>Anything the user should be able to open in a new tab</td><td>HotelCard, Footer, NotFound</td></tr>
+  <tr><td><code>&lt;NavLink&gt;</code></td><td>A Link that knows if it's active</td><td>Nav menus that highlight the current page</td><td>Navbar, owner Sidebar</td></tr>
+  <tr><td><code>useNavigate()</code></td><td>Navigate from code</td><td>After a form submit or an action completes</td><td>Hero search, bookRoom, registerHotel</td></tr>
+  <tr><td><code>useLocation()</code></td><td>Read the current URL</td><td>Conditional layout / scroll resets</td><td>App.jsx, Navbar</td></tr>
+</table>
+</div>
+
+<div class="warn">
+  <p><b>Never use <code>&lt;a href="/rooms"&gt;</code> inside an SPA.</b> It triggers a full page reload — the JS bundle re-downloads, React remounts, and all your Context state is wiped. Your bookings would vanish. Always <code>&lt;Link to="/rooms"&gt;</code>.</p>
+  <p>The exception is a link that genuinely leaves the app — like the <code>tel:</code> link in <span class="file">RoomDetails.jsx:259</span>. That one <em>should</em> be a plain <code>&lt;a&gt;</code>.</p>
+</div>
+
+<h3>NavLink's render-prop trick</h3>
+<p>NavLink can take a <em>function</em> as its className and even as its children, receiving <code>{ isActive }</code>:</p>
+<pre><code><span class="tok-tag">&lt;NavLink</span>
+  <span class="tok-attr">to</span>={link.path}
+  <span class="tok-attr">className</span>={({ isActive }) =&gt; `group flex flex-col ${isActive ? <span class="tok-str">"font-medium"</span> : <span class="tok-str">""</span>}`}<span class="tok-tag">&gt;</span>
+  {({ isActive }) =&gt; (
+    <span class="tok-tag">&lt;&gt;</span>
+      {link.name}
+      <span class="tok-tag">&lt;div</span> <span class="tok-attr">className</span>={`h-0.5 ${isActive ? <span class="tok-str">"w-full"</span> : <span class="tok-str">"w-0 group-hover:w-full"</span>}`} <span class="tok-tag">/&gt;</span>
+    <span class="tok-tag">&lt;/&gt;</span>
+  )}
+<span class="tok-tag">&lt;/NavLink&gt;</span></code></pre>
+<p>That's how the underline animates in and stays put on the active link.</p>
+
+<div class="note">
+  <p><b>The <code>end</code> prop</b> in <span class="file">Sidebar.jsx</span>: <code>end={item.path === "/owner"}</code>. Without it, the Dashboard link would look active on <code>/owner/add-room</code> too, since <code>/owner</code> is a prefix of it. <code>end</code> demands an exact match.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="nested">18 · Nested routes &amp; <code>&lt;Outlet /&gt;</code></h2>
+
+<p>The owner section has a persistent shell — top navbar and left sidebar — with only the middle panel changing. Nested routes give you that for free.</p>
+
+<div class="diagram">
+  <div style="border:2px solid var(--purple); border-radius:10px; padding:0; max-width:640px; margin:0 auto; overflow:hidden">
+    <div style="background:var(--purple-soft); padding:10px; text-align:center; font-weight:700; font-size:14px; border-bottom:2px solid var(--purple)">
+      Layout.jsx — owner Navbar
+    </div>
+    <div style="display:flex; min-height:190px">
+      <div style="width:150px; background:var(--purple-soft); border-right:2px solid var(--purple); padding:12px; font-size:12.5px; line-height:2.1">
+        <b>Sidebar</b><br>
+        Dashboard<br>Add Room<br>List Room
+      </div>
+      <div style="flex:1; padding:16px; display:flex; align-items:center; justify-content:center">
+        <div class="box grn" style="width:100%">
+          <b>&lt;Outlet /&gt;</b>
+          <small>Dashboard &nbsp;·&nbsp; AddRoom &nbsp;·&nbsp; ListRoom<br>swapped based on the URL</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cap">The purple frame renders once and stays mounted. Only the green slot changes.</p>
+</div>
+
+<pre><code><span class="tok-com">// pages/hotelOwner/Layout.jsx</span>
+<span class="tok-key">const</span> <span class="tok-fn">Layout</span> = () =&gt; (
+  <span class="tok-tag">&lt;div</span> <span class="tok-attr">className</span>=<span class="tok-str">"flex flex-col h-screen"</span><span class="tok-tag">&gt;</span>
+    <span class="tok-tag">&lt;Navbar /&gt;</span>
+    <span class="tok-tag">&lt;div</span> <span class="tok-attr">className</span>=<span class="tok-str">"flex h-full"</span><span class="tok-tag">&gt;</span>
+      <span class="tok-tag">&lt;Sidebar /&gt;</span>
+      <span class="tok-tag">&lt;div</span> <span class="tok-attr">className</span>=<span class="tok-str">"flex-1 p-4 pt-10 md:px-10 h-full"</span><span class="tok-tag">&gt;</span>
+        <span class="tok-tag">&lt;Outlet /&gt;</span>   <span class="tok-com">← the matched child route renders here</span>
+      <span class="tok-tag">&lt;/div&gt;</span>
+    <span class="tok-tag">&lt;/div&gt;</span>
+  <span class="tok-tag">&lt;/div&gt;</span>
+);</code></pre>
+
+<p>Two details in the route config:</p>
+<ul>
+  <li><code>&lt;Route index element={&lt;Dashboard /&gt;} /&gt;</code> — <code>index</code> means "the default child", so <code>/owner</code> with nothing after it shows Dashboard.</li>
+  <li><code>path="add-room"</code> has <b>no leading slash</b>. Child paths are relative, so it resolves to <code>/owner/add-room</code>. A leading slash would make it absolute and break the nesting.</li>
+</ul>
+
+<div class="tip">
+  <p><b>Why this beats putting the Sidebar in each page:</b> the Sidebar and Navbar never unmount when you switch owner pages. No flicker, no re-running of their effects, and any state they hold survives navigation.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="url">19 · The URL as state — <code>useParams</code> &amp; <code>useSearchParams</code></h2>
+
+<p>Some state belongs in the URL, not in <code>useState</code>. The test: <b>should this survive a refresh, a bookmark, or a shared link?</b> If yes, put it in the URL.</p>
+
+<h3><code>useParams</code> — the dynamic segment</h3>
+<pre><code><span class="tok-com">// route: &lt;Route path="/rooms/:id" element={&lt;RoomDetails /&gt;} /&gt;</span>
+<span class="tok-key">const</span> { id } = <span class="tok-fn">useParams</span>();
+<span class="tok-key">const</span> room = rooms.<span class="tok-fn">find</span>((item) =&gt; item._id === id);
+<span class="tok-key">if</span> (!room) <span class="tok-key">return</span> <span class="tok-tag">&lt;NotFound /&gt;</span>;</code></pre>
+<p>The <code>:id</code> in the path becomes <code>params.id</code>. The <code>if (!room)</code> guard is essential — someone pasting <code>/rooms/garbage</code> would otherwise crash the app on <code>room.images[0]</code>.</p>
+
+<h3><code>useSearchParams</code> — the query string</h3>
+<pre><code><span class="tok-key">const</span> [searchParams, setSearchParams] = <span class="tok-fn">useSearchParams</span>();
+<span class="tok-key">const</span> destination = searchParams.<span class="tok-fn">get</span>(<span class="tok-str">"destination"</span>) ?? <span class="tok-str">""</span>;
+<span class="tok-com">// …clearing it:</span>
+<span class="tok-fn">setSearchParams</span>({});</code></pre>
+<p>Note the API mirrors <code>useState</code>: a value and a setter. But the value lives in the address bar, so back/forward buttons work on it for free.</p>
+
+<div class="diagram">
+  <div class="col">
+    <div class="box"><b>Hero search form</b><small>local state: destination, dates, guests</small></div>
+    <div class="arrow">↓ &nbsp;handleSearch builds a URLSearchParams</div>
+    <div class="box acc"><b>navigate("/rooms?destination=Dubai&amp;checkIn=…")</b></div>
+    <div class="arrow">↓ &nbsp;router matches /rooms</div>
+    <div class="box pur"><b>AllRooms mounts</b><small>searchParams.get("destination") → "Dubai"</small></div>
+    <div class="arrow">↓ &nbsp;feeds the useMemo dependency array</div>
+    <div class="box grn"><b>filteredRooms recomputes</b><small>shareable, refreshable, bookmarkable</small></div>
+  </div>
+  <p class="cap">Local state on one page becomes URL state on the next. Copy that URL to a friend and they see the same results.</p>
+</div>
+
+<div class="note">
+  <p><b>Notice the split in AllRooms.</b> <code>destination</code> comes from the URL (shareable), while <code>selectedRoomTypes</code>, <code>selectedPriceRanges</code>, and <code>sortOption</code> are local <code>useState</code> (not shareable). That's an inconsistency you could fix as an exercise — move all filters into search params and the entire filtered view becomes linkable.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="keyreset">20 · Using <code>key</code> to reset a component</h2>
+
+<p>This is an advanced pattern and it's sitting at the bottom of your <span class="file">RoomDetails.jsx</span>:</p>
+
+<pre><code><span class="tok-key">const</span> <span class="tok-fn">RoomDetails</span> = () =&gt; {
+  <span class="tok-key">const</span> { id } = <span class="tok-fn">useParams</span>();
+  <span class="tok-key">const</span> { rooms } = <span class="tok-fn">useAppContext</span>();
+  <span class="tok-key">const</span> room = rooms.<span class="tok-fn">find</span>((item) =&gt; item._id === id);
+  <span class="tok-key">if</span> (!room) <span class="tok-key">return</span> <span class="tok-tag">&lt;NotFound /&gt;</span>;
+  <span class="tok-key">return</span> <span class="tok-tag">&lt;RoomDetailsView</span> <span class="tok-attr">key</span>={room._id} <span class="tok-attr">room</span>={room} <span class="tok-tag">/&gt;</span>;   <span class="tok-com">// ← the trick</span>
+};</code></pre>
+
+<h4>The problem it solves</h4>
+<p>You're on room A. You've picked dates, clicked "Check Availability", and selected the third photo. Now you navigate to room B. The URL changes, but React sees the <em>same component type in the same position</em> — so it reuses the instance and keeps all its state. You'd be looking at room B with room A's dates and availability result still on screen.</p>
+
+<div class="diagram">
+  <div class="row" style="align-items:flex-start; gap:32px">
+    <div class="col" style="flex:1; min-width:240px">
+      <div class="box amb" style="width:100%"><b>Without key</b></div>
+      <div style="font-size:13px; margin-top:8px">Room A → Room B</div>
+      <div class="arrow">↓</div>
+      <div class="box" style="width:100%"><small>same instance reused<br>mainImage still A's photo<br>dates still filled in<br>availability still "available"</small></div>
+    </div>
+    <div class="col" style="flex:1; min-width:240px">
+      <div class="box grn" style="width:100%"><b>With key={room._id}</b></div>
+      <div style="font-size:13px; margin-top:8px">Room A → Room B</div>
+      <div class="arrow">↓</div>
+      <div class="box" style="width:100%"><small>key changed → unmount + remount<br>fresh useState defaults<br>clean form, clean gallery</small></div>
+    </div>
+  </div>
+  <p class="cap">A changed <code>key</code> tells React "this is a different thing," and it throws away the old instance entirely.</p>
+</div>
+
+<p>The wrapper/view split exists for the same reason: the outer component reads the route and the inner one holds the state, so the inner one can be replaced wholesale. Remember this pattern — it's the standard React answer to "how do I reset a form when the id changes?"</p>
+
+<!-- ============================================================ -->
+<h2 id="clerk">21 · Third-party providers — Clerk auth</h2>
+
+<p>Clerk is a full authentication service you plugged in with one wrapper and three hooks. Everything else — the sign-in UI, sessions, password reset — is handled for you.</p>
+
+<div class="scroll">
+<table>
+  <tr><th>API</th><th>What it gives you</th><th>Where you used it</th></tr>
+  <tr><td><code>&lt;ClerkProvider&gt;</code></td><td>Puts auth state into context</td><td><span class="file">main.jsx</span></td></tr>
+  <tr><td><code>useUser()</code></td><td><code>{ user }</code> — null when logged out</td><td>Navbar, AppProvider</td></tr>
+  <tr><td><code>useClerk()</code></td><td><code>openSignIn()</code> — opens the modal</td><td>Navbar login button</td></tr>
+  <tr><td><code>&lt;UserButton&gt;</code></td><td>Avatar + dropdown, extensible with custom actions</td><td>Navbar (adds a "My Bookings" item)</td></tr>
+</table>
+</div>
+
+<p>The graceful-fallback pattern in <span class="file">AppProvider.jsx</span> is worth studying:</p>
+<pre><code><span class="tok-key">const</span> currentUser = user
+  ? { _id: user.id,
+      username: user.fullName || user.username || <span class="tok-str">"Guest"</span>,
+      email: user.primaryEmailAddress?.emailAddress ?? <span class="tok-str">""</span>,
+      image: user.imageUrl }
+  : userDummyData;</code></pre>
+<p>Two things happen here. First, you <b>adapt</b> Clerk's shape into your own — so if you ever swap auth providers, only this block changes. Second, you fall back to a dummy user so the app is fully usable without logging in. Notice the chained fallbacks (<code>||</code>) and optional chaining (<code>?.</code>) — Clerk users may sign up with a username and no full name, or with no email at all.</p>
+
+<div class="warn">
+  <p><b>Client-side auth is not security.</b> <code>isOwner</code> lives in React state; anyone can flip it in DevTools and reach <code>/owner</code>. That's fine here because there's no real data to protect. In a production app, every rule must be re-checked on the server — the front end only decides what to <em>show</em>, never what's <em>allowed</em>.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="vite">22 · Vite, environment variables &amp; assets</h2>
+
+<h3>The two commands</h3>
+<pre><code>npm run dev     <span class="tok-com"># dev server, hot reload, ~instant startup</span>
+npm run build   <span class="tok-com"># optimised bundle into dist/</span>
+npm run preview <span class="tok-com"># serve dist/ locally to test the real build</span>
+npm run lint    <span class="tok-com"># ESLint over the whole project</span></code></pre>
+
+<p>Vite is fast in dev because it doesn't bundle — it serves your files as native ES modules and lets the browser do the linking. Change one file and only that module reloads. For production it switches to Rollup and does bundle, minify, tree-shake, and hash filenames.</p>
+
+<h3>Environment variables</h3>
+<pre><code><span class="tok-key">const</span> PUBLISHABLE_KEY = <span class="tok-key">import</span>.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+<span class="tok-key">if</span> (!PUBLISHABLE_KEY) {
+  <span class="tok-key">throw new</span> <span class="tok-fn">Error</span>(<span class="tok-str">"Missing Clerk Publishable Key. Add VITE_CLERK_PUBLISHABLE_KEY to client/.env"</span>);
+}</code></pre>
+<p>Three rules:</p>
+<ul>
+  <li>It's <code>import.meta.env</code>, not <code>process.env</code> (that's Node/webpack).</li>
+  <li>Only vars prefixed <code>VITE_</code> are exposed to the browser. That prefix is a safety gate — it stops you accidentally shipping a secret.</li>
+  <li>Anything exposed this way is <b>public</b>. It ends up in the JS bundle, readable by anyone. Publishable keys are designed for that; secret keys must never go here.</li>
+</ul>
+<p>The fail-fast <code>throw</code> is good practice — a clear error at startup beats a confusing one deep inside Clerk later.</p>
+
+<h3>Assets: why <span class="file">assets.js</span> exists</h3>
+<pre><code><span class="tok-key">import</span> logo <span class="tok-key">from</span> <span class="tok-str">'./logo.svg'</span>;
+<span class="tok-key">import</span> searchIcon <span class="tok-key">from</span> <span class="tok-str">'./searchIcon.svg'</span>;
+<span class="tok-key">export const</span> assets = { logo, searchIcon, <span class="tok-com">/* …40 more */</span> };</code></pre>
+<p>Importing an image gives you the <em>final URL</em> after Vite hashes it (<code>logo-BN30LNQe.svg</code> — you can see these in <span class="file">client/dist/assets/</span>). Hashing is how browsers can cache aggressively yet still pick up a changed file. Collecting them all in one module means components write <code>assets.logo</code> instead of managing dozens of relative import paths.</p>
+
+<p>The same file exports your fake database — <code>roomsDummyData</code>, <code>userBookingsDummyData</code>, <code>cities</code>, <code>facilityIcons</code>. That <code>facilityIcons</code> map is a neat little pattern: it turns a string into an icon without any if-else chain.</p>
+<pre><code><span class="tok-tag">&lt;img</span> <span class="tok-attr">src</span>={facilityIcons[item]} <span class="tok-attr">alt</span>=<span class="tok-str">""</span> <span class="tok-tag">/&gt;</span>   <span class="tok-com">// item === "Free WiFi" → the wifi svg</span></code></pre>
+
+<h3>Object URLs in AddRoom — a real browser API</h3>
+<pre><code><span class="tok-key">const</span> <span class="tok-fn">selectSlot</span> = (key, file) =&gt;
+  <span class="tok-fn">setImages</span>((prev) =&gt; {
+    <span class="tok-key">if</span> (prev[key]) URL.<span class="tok-fn">revokeObjectURL</span>(prev[key].url);   <span class="tok-com">// free the old one</span>
+    <span class="tok-key">return</span> { ...prev, [key]: file ? { file, url: URL.<span class="tok-fn">createObjectURL</span>(file) } : <span class="tok-key">null</span> };
+  });</code></pre>
+<p><code>createObjectURL</code> mints a temporary <code>blob:</code> URL pointing at a file in memory, so you can preview an image before any upload exists. Each one holds memory until revoked — hence the <code>revokeObjectURL</code> when a slot is replaced. This is exactly the kind of resource management React doesn't do for you.</p>
+
+<!-- ============================================================ -->
+<h2 id="tw">23 · Tailwind CSS</h2>
+
+<p>Instead of writing CSS in a separate file, you compose small utility classes in the markup:</p>
+<pre><code><span class="tok-tag">&lt;div</span> <span class="tok-attr">className</span>=<span class="tok-str">"flex flex-col md:flex-row items-start py-10 gap-6 border-b border-gray-300"</span><span class="tok-tag">&gt;</span></code></pre>
+
+<div class="scroll">
+<table>
+  <tr><th>Pattern</th><th>Meaning</th><th>Example in your code</th></tr>
+  <tr><td><code>md:</code> <code>lg:</code> <code>xl:</code></td><td>Applies at that breakpoint and up — mobile-first</td><td><code>flex-col md:flex-row</code></td></tr>
+  <tr><td><code>max-md:</code></td><td>Applies <em>below</em> that breakpoint</td><td><code>max-md:hidden</code></td></tr>
+  <tr><td><code>hover:</code> <code>active:</code> <code>disabled:</code></td><td>State variants</td><td><code>hover:bg-primary-dull active:scale-95</code></td></tr>
+  <tr><td><code>bg-white/80</code></td><td>Opacity shorthand</td><td>the scrolled navbar</td></tr>
+  <tr><td><code>group</code> + <code>group-hover:</code></td><td>Child reacts to parent hover</td><td>the Navbar underline animation</td></tr>
+  <tr><td><code>peer</code> + <code>peer-checked:</code></td><td>Sibling reacts to input state</td><td>the availability toggle in <span class="file">ListRoom.jsx</span></td></tr>
+  <tr><td><code>sr-only</code></td><td>Visually hidden, still read by screen readers</td><td>the real checkbox behind that toggle</td></tr>
+  <tr><td><code>last:</code> <code>first:</code></td><td>Position-based variants</td><td><code>last:border-0</code> on the room list</td></tr>
+</table>
+</div>
+
+<h3>Your custom theme</h3>
+<pre><code><span class="tok-key">@import</span> <span class="tok-str">"tailwindcss"</span>;
+
+<span class="tok-key">@theme</span> {
+  --color-primary: #2563eb;
+  --color-primary-dull: #1d4ed8;
+  --color-secondary: #fbbf24;
+}</code></pre>
+<p>That's Tailwind v4's config-in-CSS approach — no <span class="file">tailwind.config.js</span> needed. Defining <code>--color-primary</code> automatically generates <code>bg-primary</code>, <code>text-primary</code>, <code>border-primary</code>, and every other color utility.</p>
+
+<div class="tip">
+  <p><b>The custom-toggle pattern in ListRoom is worth understanding.</b> A real <code>&lt;input type="checkbox"&gt;</code> is hidden with <code>sr-only</code> (so keyboard and screen-reader users get proper semantics), and two sibling divs styled with <code>peer-checked:</code> draw the visible switch. You get a designed control without sacrificing accessibility.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="flows">24 · The three flows, end to end</h2>
+
+<h3>Flow 1 — Search</h3>
+<div class="diagram">
+  <div class="col">
+    <div class="box"><b>1. Hero form</b><small>local state: destination, checkIn, checkOut, guests</small></div>
+    <div class="arrow">↓ submit → preventDefault()</div>
+    <div class="box amb"><b>2. rememberCity(destination)</b><small>context keeps the last 3, deduped</small></div>
+    <div class="arrow">↓</div>
+    <div class="box acc"><b>3. navigate("/rooms?destination=Dubai&amp;…")</b></div>
+    <div class="arrow">↓</div>
+    <div class="box pur"><b>4. AllRooms reads useSearchParams()</b></div>
+    <div class="arrow">↓</div>
+    <div class="box grn"><b>5. useMemo filters + sorts → cards render</b></div>
+  </div>
+</div>
+<p>The dedupe in <code>rememberCity</code> is a nice one-liner worth reading closely:</p>
+<pre><code><span class="tok-fn">setSearchedCities</span>((prev) =&gt; [city, ...prev.<span class="tok-fn">filter</span>((item) =&gt; item !== city)].<span class="tok-fn">slice</span>(<span class="tok-int">0</span>, <span class="tok-int">3</span>));
+<span class="tok-com">// remove it if already present → put it first → cap the list at 3</span></code></pre>
+
+<h3>Flow 2 — Booking</h3>
+<div class="diagram">
+  <div class="col">
+    <div class="box"><b>1. Click a room card</b><small>&lt;Link to={`/rooms/${room._id}`}&gt;</small></div>
+    <div class="arrow">↓</div>
+    <div class="box"><b>2. RoomDetails: useParams → find the room</b><small>not found → &lt;NotFound /&gt;</small></div>
+    <div class="arrow">↓</div>
+    <div class="box"><b>3. Pick dates + guests</b><small>nights and totalPrice computed live during render</small></div>
+    <div class="arrow">↓ submit #1</div>
+    <div class="box amb"><b>4. isRoomAvailable()</b><small>overlap check against every existing booking</small></div>
+    <div class="arrow">↓ submit #2 (only if available)</div>
+    <div class="box acc"><b>5. bookRoom()</b><small>builds the record, prepends to bookings</small></div>
+    <div class="arrow">↓</div>
+    <div class="box grn"><b>6. navigate("/my-bookings")</b><small>the new booking is already there</small></div>
+  </div>
+  <p class="cap">One button, two jobs — its label is <code>{availability?.ok ? "Book Now" : "Check Availability"}</code>.</p>
+</div>
+
+<p>The date-overlap check is the most algorithmically interesting code you wrote:</p>
+<pre><code><span class="tok-key">return</span> !bookings.<span class="tok-fn">some</span>((booking) =&gt;
+  booking.room._id === roomId &amp;&amp;
+  start &lt; <span class="tok-key">new</span> <span class="tok-fn">Date</span>(booking.checkOutDate) &amp;&amp;
+  <span class="tok-key">new</span> <span class="tok-fn">Date</span>(booking.checkInDate) &lt; end
+);</code></pre>
+<div class="diagram">
+  <p style="text-align:center; font-size:14px; margin:0 0 14px"><b>Two ranges overlap if — and only if — each starts before the other ends.</b></p>
+  <div style="max-width:560px; margin:0 auto; font-family:ui-monospace,monospace; font-size:13px; line-height:2.1">
+    <div>existing booking &nbsp;<span style="background:var(--purple-soft); color:var(--purple); padding:2px 26px; border-radius:4px">════════</span></div>
+    <div>overlaps ❌ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="background:var(--amber-soft); color:var(--amber); padding:2px 20px; border-radius:4px">═════</span></div>
+    <div>before, fine ✅ <span style="background:var(--green-soft); color:var(--green); padding:2px 12px; border-radius:4px">═══</span></div>
+    <div>after, fine ✅ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="background:var(--green-soft); color:var(--green); padding:2px 14px; border-radius:4px">════</span></div>
+  </div>
+  <p class="cap">Strict <code>&lt;</code> (not <code>&lt;=</code>) is intentional: checking out on the same day someone checks in is allowed.</p>
+</div>
+
+<p>Then in <span class="file">MyBookings.jsx</span>, <code>payBooking</code> flips three fields at once (<code>isPaid</code>, <code>status</code>, <code>paymentMethod</code>) and <code>cancelBooking</code> filters the record out — <code>map</code> to update, <code>filter</code> to delete, exactly as in <a href="#immut">section 11</a>.</p>
+
+<h3>Flow 3 — Becoming an owner</h3>
+<div class="diagram">
+  <div class="col">
+    <div class="box"><b>1. Click "List Your Hotel"</b><small>setShowHotelReg(true)</small></div>
+    <div class="arrow">↓ App.jsx renders {showHotelReg &amp;&amp; &lt;HotelReg /&gt;}</div>
+    <div class="box"><b>2. Modal opens</b><small>body scroll locked, Escape closes, click-outside closes</small></div>
+    <div class="arrow">↓ submit</div>
+    <div class="box acc"><b>3. registerHotel(details)</b><small>setHotel · setIsOwner(true) · setShowHotelReg(false) · notify · navigate</small></div>
+    <div class="arrow">↓</div>
+    <div class="box pur"><b>4. Navbar button now reads "Dashboard"</b><small>because isOwner flipped</small></div>
+    <div class="arrow">↓</div>
+    <div class="box grn"><b>5. /owner → Layout + Dashboard</b><small>Navbar and Footer hidden by isOwnerPath</small></div>
+  </div>
+  <p class="cap">One state change (<code>isOwner</code>) reshapes the navbar, unlocks a route, and changes the whole page shell. That's declarative UI.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="lifecycle">25 · The render lifecycle, in one picture</h2>
+
+<p>Everything above is really just this loop, over and over:</p>
+
+<div class="diagram">
+  <div class="col">
+    <div class="box amb"><b>1. Trigger</b><small>a click, a keystroke, a URL change, a timer</small></div>
+    <div class="arrow">↓</div>
+    <div class="box acc"><b>2. Render</b><small>React calls your component functions. They must be pure — no DOM edits, no fetching.</small></div>
+    <div class="arrow">↓</div>
+    <div class="box pur"><b>3. Reconcile</b><small>React diffs the new element tree against the old one, using <code>key</code> to match list items</small></div>
+    <div class="arrow">↓</div>
+    <div class="box grn"><b>4. Commit</b><small>Only the actual differences are applied to the real DOM</small></div>
+    <div class="arrow">↓</div>
+    <div class="box"><b>5. Effects</b><small>useEffect callbacks run — cleanup first, then the new effect</small></div>
+    <div class="arrow" style="font-size:14px">↺ &nbsp;back to 1 on the next trigger</div>
+  </div>
+</div>
+
+<p><b>Why step 2 must be pure:</b> React reserves the right to call your component more than once, to throw away a render it doesn't need, or (in Strict Mode during development) to double-invoke it deliberately to surface side effects. If rendering also mutated something, that would be unpredictable. Side effects belong in step 5.</p>
+
+<p><b>Why step 4 is cheap:</b> React doesn't rebuild the page. It compares two lightweight JavaScript object trees and touches only the DOM nodes that actually differ — a text node here, one attribute there. The DOM is slow; JS object comparison is fast. That's the entire performance argument for React.</p>
+
+<!-- ============================================================ -->
+<h2 id="gaps">26 · What's missing &amp; what to build next</h2>
+
+<p>Knowing your project's boundaries is as valuable as knowing its contents.</p>
+
+<div class="scroll">
+<table>
+  <tr><th>Gap</th><th>What happens today</th><th>What you'd learn by fixing it</th></tr>
+  <tr><td><b>No persistence</b></td><td>Refresh the page and every booking, room, and owner status is gone — it all lives in memory</td><td><code>localStorage</code> + <code>useEffect</code>, or a real backend</td></tr>
+  <tr><td><b>No backend</b></td><td>Data comes from <span class="file">assets.js</span>; nothing is shared between users or devices</td><td><code>fetch</code>, async/await, loading and error states, React Query</td></tr>
+  <tr><td><b>No protected routes</b></td><td><code>/owner</code> is reachable by typing the URL, even without registering</td><td>Route guards — a wrapper component that redirects with <code>&lt;Navigate /&gt;</code></td></tr>
+  <tr><td><b>No real payment</b></td><td><code>payBooking</code> just sets <code>isPaid: true</code></td><td>Stripe Checkout, webhooks, why payment must be verified server-side</td></tr>
+  <tr><td><b>Bookings aren't filtered by user</b></td><td>My Bookings shows every booking in the app, not just yours</td><td>Filtering by <code>currentUser._id</code>; the same for the owner dashboard by hotel</td></tr>
+  <tr><td><b>Images are blob URLs</b></td><td>Uploaded room photos die with the tab</td><td>File uploads, FormData, cloud storage like Cloudinary or S3</td></tr>
+  <tr><td><b>No error boundary</b></td><td>One thrown error blanks the whole app</td><td><code>&lt;ErrorBoundary&gt;</code> and graceful degradation</td></tr>
+  <tr><td><b>No tests</b></td><td>Every change is verified by clicking around</td><td>Vitest + React Testing Library</td></tr>
+</table>
+</div>
+
+<h3>A sensible order to tackle them</h3>
+<ol>
+  <li><b>localStorage persistence.</b> Smallest change, most satisfying result — bookings survive a refresh. Two <code>useEffect</code>s and a lazy <code>useState</code> initialiser.</li>
+  <li><b>Protected routes.</b> A ~15-line component; teaches you redirects and route composition.</li>
+  <li><b>Filter bookings by user.</b> One <code>.filter()</code>, but it makes you think about data ownership.</li>
+  <li><b>Move all filters into the URL.</b> Finishes the idea you started in AllRooms and makes every filtered view shareable.</li>
+  <li><b>A real backend.</b> Express + MongoDB, then swap the dummy arrays for <code>fetch</code>. This is where loading states, error states, and async React actually click. Because everything already goes through Context actions, you'd be changing <em>one file</em> — <span class="file">AppProvider.jsx</span> — and no component would need to know.</li>
+</ol>
+
+<div class="tip">
+  <p><b>That last point is the payoff of your architecture.</b> Components ask the context for data and call context actions to change it. They never care <em>where</em> the data comes from. Swapping in-memory arrays for API calls touches the provider and nothing else. That's what "separation of concerns" means in practice, and you built it correctly without a server forcing you to.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="quiz">27 · Check yourself</h2>
+
+<p>If you can answer these from memory, you understand the project. Click to reveal.</p>
+
+<details>
+  <summary>Why does <code>&lt;AppProvider&gt;</code> have to be inside <code>&lt;BrowserRouter&gt;</code>?</summary>
+  <p class="q">Because AppProvider calls <code>useNavigate()</code>, and that hook reads router context. A hook can only read context provided by an ancestor. Outside the router, there's nothing to read and React throws.</p>
+</details>
+
+<details>
+  <summary>What actually breaks if you use <code>key={index}</code> on the rooms list?</summary>
+  <p class="q"><code>addRoom</code> prepends with <code>[room, ...prev]</code>, so every existing item's index shifts by one. React would think item 0 changed content rather than that a new item was inserted, and would reuse the wrong DOM nodes — carrying over things like scroll position, focus, and any uncontrolled input values.</p>
+</details>
+
+<details>
+  <summary>Why does the toast <code>useEffect</code> return <code>clearTimeout</code>?</summary>
+  <p class="q">Cleanup runs before the effect re-runs. If a second toast fires 3 seconds into the first one's 3.5-second timer, the cleanup cancels the stale timer so the new message gets its full duration instead of being wiped after 0.5s. It also prevents a timer firing after unmount.</p>
+</details>
+
+<details>
+  <summary>Where does <code>totalRevenue</code> live, and why isn't it state?</summary>
+  <p class="q">It's derived: <code>bookings.reduce((sum, b) =&gt; sum + b.totalPrice, 0)</code>, recomputed every render. Stored totals drift out of sync with the list they summarise — every add, cancel, and edit would need to remember to update it. Derived values can't drift.</p>
+</details>
+
+<details>
+  <summary>What does <code>key={room._id}</code> on <code>&lt;RoomDetailsView&gt;</code> accomplish?</summary>
+  <p class="q">It forces a full remount when you navigate between rooms. Without it React reuses the instance, and room B would show room A's selected photo, dates, and availability result. A changed key means "different thing" — discard the old state entirely.</p>
+</details>
+
+<details>
+  <summary>Why <code>[...sorted].sort(...)</code> instead of <code>sorted.sort(...)</code>?</summary>
+  <p class="q"><code>.sort()</code> mutates in place. <code>sorted</code> came from <code>rooms.filter()</code>, which is a new array — but the deeper habit matters: never mutate anything that could be, or could later become, state. The spread makes a copy first.</p>
+</details>
+
+<details>
+  <summary>What's the difference between <code>&lt;Link to="/rooms"&gt;</code> and <code>&lt;a href="/rooms"&gt;</code>?</summary>
+  <p class="q">Link intercepts the click and swaps components client-side — instant, and Context state survives. The anchor triggers a full page reload: the bundle re-downloads, React remounts from scratch, and every booking in memory is lost.</p>
+</details>
+
+<details>
+  <summary>Why does <code>useMemo</code> in AllRooms omit <code>openFilters</code> from its dependencies?</summary>
+  <p class="q">Because <code>openFilters</code> only controls whether the mobile filter drawer is visible — it has no effect on which rooms match. Including it would recompute the whole filter-and-sort pipeline every time someone taps "SHOW". Dependencies should list exactly what the calculation reads, no more.</p>
+</details>
+
+<details>
+  <summary>How does the app know to hide the Navbar and Footer on owner pages?</summary>
+  <p class="q"><code>App.jsx</code> reads <code>useLocation()</code>, computes <code>pathname.startsWith("/owner")</code>, and renders <code>{!isOwnerPath &amp;&amp; &lt;Navbar /&gt;}</code>. The owner section supplies its own shell through <code>Layout.jsx</code> and <code>&lt;Outlet /&gt;</code>.</p>
+</details>
+
+<details>
+  <summary>Why does <code>createId</code> combine a timestamp <em>and</em> a counter?</summary>
+  <p class="q"><code>Date.now()</code> has millisecond resolution, so two records created in the same millisecond would collide — and duplicate keys break React's reconciliation. The incrementing counter guarantees uniqueness within the session. A real database would issue these ids instead.</p>
+</details>
+
+<hr>
+
+<div class="card">
+  <h4 style="margin-top:0">The short version</h4>
+  <p style="margin-bottom:0">You wrote a component tree that renders from state. Local state stays local; anything two components share moved into a Context that exposes <b>data</b> and <b>actions</b>, never raw setters. The URL holds the state that should be shareable. Effects handle the few things outside React — listeners, timers, the document body — and every one of them cleans up after itself. Lists carry stable keys, updates never mutate, and a changed <code>key</code> is how you throw state away on purpose.</p>
+  <p style="margin-bottom:0; margin-top:12px">That's not a hotel booking app's worth of knowledge. That's most of React.</p>
+</div>
+
+</div>
+</body>
+</html>

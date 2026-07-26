@@ -1,0 +1,1543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hotel Booking app — poora samjhaava (Hinglish)</title>
+</head>
+<body>
+<style>
+:root{
+  --bg:#f5f6f8;
+  --panel:#ffffff;
+  --panel-2:#fafbfc;
+  --ink:#12151b;
+  --muted:#5b6472;
+  --faint:#8b94a3;
+  --line:#e1e5eb;
+  --line-soft:#eceff3;
+
+  --accent:#1f5fd8;
+  --accent-soft:#e8effc;
+  --struct:#9a6b00;
+  --struct-soft:#fbf2df;
+
+  --green:#0e7a52;
+  --green-soft:#e3f4ec;
+  --warn:#a35a00;
+  --warn-soft:#fbeedd;
+  --violet:#5b3fc7;
+  --violet-soft:#eeeafc;
+
+  --code-bg:#171b22;
+  --code-ink:#dfe4ec;
+
+  --col:720px;
+  --wide:940px;
+
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1116; --panel:#151922; --panel-2:#12161e;
+    --ink:#e6e9ef; --muted:#99a2b2; --faint:#6f7889;
+    --line:#262c38; --line-soft:#1d222c;
+    --accent:#7aa5ff; --accent-soft:#182339;
+    --struct:#d9a441; --struct-soft:#2b2313;
+    --green:#45c98f; --green-soft:#0f2b22;
+    --warn:#e0a955; --warn-soft:#2c2113;
+    --violet:#a992f0; --violet-soft:#211c37;
+    --code-bg:#0a0d12; --code-ink:#dfe4ec;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1116; --panel:#151922; --panel-2:#12161e;
+  --ink:#e6e9ef; --muted:#99a2b2; --faint:#6f7889;
+  --line:#262c38; --line-soft:#1d222c;
+  --accent:#7aa5ff; --accent-soft:#182339;
+  --struct:#d9a441; --struct-soft:#2b2313;
+  --green:#45c98f; --green-soft:#0f2b22;
+  --warn:#e0a955; --warn-soft:#2c2113;
+  --violet:#a992f0; --violet-soft:#211c37;
+  --code-bg:#0a0d12; --code-ink:#dfe4ec;
+}
+:root[data-theme="light"]{
+  --bg:#f5f6f8; --panel:#ffffff; --panel-2:#fafbfc;
+  --ink:#12151b; --muted:#5b6472; --faint:#8b94a3;
+  --line:#e1e5eb; --line-soft:#eceff3;
+  --accent:#1f5fd8; --accent-soft:#e8effc;
+  --struct:#9a6b00; --struct-soft:#fbf2df;
+  --green:#0e7a52; --green-soft:#e3f4ec;
+  --warn:#a35a00; --warn-soft:#fbeedd;
+  --violet:#5b3fc7; --violet-soft:#eeeafc;
+  --code-bg:#171b22; --code-ink:#dfe4ec;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--sans); font-size:16.5px; line-height:1.72;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+.page{max-width:var(--wide); margin:0 auto; padding:0 24px 140px}
+
+.masthead{max-width:var(--col); margin:0 auto; padding:88px 0 44px}
+.eyebrow{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--struct); font-weight:600; margin:0 0 22px;
+}
+h1{
+  font-size:clamp(34px,5.6vw,52px); line-height:1.08; margin:0 0 20px;
+  letter-spacing:-.03em; font-weight:700; text-wrap:balance;
+}
+.standfirst{font-size:19px; line-height:1.62; color:var(--muted); margin:0; max-width:36em}
+.meta-rule{
+  display:flex; gap:28px; flex-wrap:wrap; margin-top:34px; padding-top:20px;
+  border-top:1px solid var(--line); font-family:var(--mono); font-size:12px;
+  color:var(--faint); letter-spacing:.03em;
+}
+.meta-rule b{color:var(--ink); font-weight:600}
+
+h2{
+  max-width:var(--col); margin:76px auto 20px; padding-top:26px;
+  border-top:2px solid var(--ink);
+  font-size:27px; line-height:1.24; letter-spacing:-.02em; font-weight:700;
+  text-wrap:balance;
+}
+h2 .n{
+  display:block; font-family:var(--mono); font-size:11.5px; font-weight:600;
+  letter-spacing:.18em; color:var(--struct); margin-bottom:10px;
+}
+h3{max-width:var(--col); margin:38px auto 10px; font-size:18.5px; line-height:1.4; letter-spacing:-.01em; font-weight:650}
+h4{
+  max-width:var(--col); margin:26px auto 8px;
+  font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted);
+}
+p{max-width:var(--col); margin:14px auto}
+ul,ol{max-width:var(--col); margin:14px auto; padding-left:24px}
+li{margin:7px 0}
+li::marker{color:var(--faint)}
+hr{max-width:var(--col); margin:52px auto; border:none; border-top:1px solid var(--line)}
+b,strong{font-weight:650}
+a{color:var(--accent)}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+
+code{
+  font-family:var(--mono); font-size:.86em; background:var(--accent-soft);
+  color:var(--accent); padding:2px 6px; border-radius:4px;
+  border:1px solid color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.file{
+  font-family:var(--mono); font-size:.8em; background:var(--violet-soft);
+  color:var(--violet); padding:2px 7px; border-radius:4px; font-weight:600;
+  white-space:nowrap;
+}
+.badge{
+  display:inline-block; font-family:var(--mono); font-size:10.5px; font-weight:600;
+  letter-spacing:.1em; padding:3px 9px; border-radius:3px; text-transform:uppercase;
+}
+.b-acc{background:var(--accent-soft); color:var(--accent)}
+.b-grn{background:var(--green-soft); color:var(--green)}
+.b-wrn{background:var(--warn-soft); color:var(--warn)}
+.b-vlt{background:var(--violet-soft); color:var(--violet)}
+
+pre{
+  max-width:var(--col); margin:18px auto; background:var(--code-bg); color:var(--code-ink);
+  padding:18px 20px; border-radius:8px; overflow-x:auto;
+  font-family:var(--mono); font-size:13px; line-height:1.62;
+  border:1px solid rgba(255,255,255,.07);
+}
+pre code{background:none; color:inherit; padding:0; font-size:inherit; border:none}
+.k{color:#c9a2ff}.s{color:#a8e08f}.f{color:#82abff}.c{color:#6f7c92; font-style:italic}
+.t{color:#ff8f8f}.a{color:#e8c07a}.i{color:#f2a06b}
+
+.aside{
+  max-width:var(--col); margin:20px auto; padding:16px 20px;
+  border-left:3px solid var(--accent); background:var(--accent-soft);
+  border-radius:0 8px 8px 0;
+}
+.aside.good{border-left-color:var(--green); background:var(--green-soft)}
+.aside.careful{border-left-color:var(--warn); background:var(--warn-soft)}
+.aside p{margin:7px 0; max-width:none}
+.aside .lbl{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+  font-weight:600; display:block; margin-bottom:6px; color:var(--accent);
+}
+.aside.good .lbl{color:var(--green)}
+.aside.careful .lbl{color:var(--warn)}
+
+.tablewrap{max-width:var(--wide); margin:22px auto; overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--panel)}
+table{width:100%; border-collapse:collapse; font-size:14.5px; min-width:520px}
+th,td{text-align:left; padding:11px 16px; vertical-align:top; border-bottom:1px solid var(--line-soft)}
+tbody tr:last-child td{border-bottom:none}
+th{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--muted); font-weight:600; background:var(--panel-2);
+  border-bottom:1px solid var(--line); white-space:nowrap;
+}
+td code{font-size:.82em}
+
+figure.dg{
+  max-width:var(--wide); margin:28px auto; background:var(--panel);
+  border:1px solid var(--line); border-radius:10px; padding:28px 24px;
+  overflow-x:auto;
+}
+figure.dg figcaption{
+  font-size:13px; color:var(--muted); text-align:center; margin-top:18px;
+  max-width:56em; margin-left:auto; margin-right:auto;
+}
+.box{
+  border:1.5px solid var(--line); border-radius:8px; padding:11px 15px;
+  background:var(--panel); text-align:center; min-width:118px;
+}
+.box b{display:block; font-size:13.5px; font-weight:650; line-height:1.35}
+.box small{display:block; color:var(--muted); font-size:11.5px; line-height:1.45; margin-top:3px}
+.box.acc{border-color:var(--accent); background:var(--accent-soft)}
+.box.grn{border-color:var(--green); background:var(--green-soft)}
+.box.vlt{border-color:var(--violet); background:var(--violet-soft)}
+.box.wrn{border-color:var(--warn); background:var(--warn-soft)}
+.row{display:flex; align-items:center; justify-content:center; gap:11px; flex-wrap:wrap}
+.stack{display:flex; flex-direction:column; align-items:center; gap:9px}
+.arw{color:var(--faint); font-size:17px; line-height:1; font-family:var(--mono)}
+.arw.txt{font-size:12px; letter-spacing:.02em}
+.nest{border:1.5px dashed var(--line); border-radius:9px; padding:14px; position:relative}
+.nest > .lbl{
+  position:absolute; top:-9px; left:15px; background:var(--panel); padding:0 8px;
+  font-family:var(--mono); font-size:11.5px; font-weight:600;
+}
+.nest.n1{border-color:var(--accent)} .nest.n1 > .lbl{color:var(--accent)}
+.nest.n2{border-color:var(--violet)} .nest.n2 > .lbl{color:var(--violet)}
+.nest.n3{border-color:var(--green)}  .nest.n3 > .lbl{color:var(--green)}
+.nest.n4{border-color:var(--struct)} .nest.n4 > .lbl{color:var(--struct)}
+.nest p{margin:5px 0 11px; font-size:13px; color:var(--muted); max-width:none}
+.tree{font-family:var(--mono); font-size:12.5px; line-height:1.85; white-space:pre; color:var(--ink); margin:0}
+.tree .dim{color:var(--faint)}
+.tree .hi{color:var(--accent); font-weight:600}
+.split{display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap}
+.split > *{flex:1 1 250px; min-width:230px}
+
+.toc{
+  max-width:var(--col); margin:34px auto 0; background:var(--panel);
+  border:1px solid var(--line); border-radius:10px; padding:22px 24px;
+}
+.toc-grid{columns:2; column-gap:34px}
+@media(max-width:640px){.toc-grid{columns:1}}
+.toc a{display:block; padding:4px 0; font-size:14px; color:var(--ink); text-decoration:none; break-inside:avoid}
+.toc a:hover{color:var(--accent)}
+.toc a .num{font-family:var(--mono); font-size:11px; color:var(--struct); margin-right:9px; letter-spacing:.06em}
+
+details{
+  max-width:var(--col); margin:11px auto; background:var(--panel);
+  border:1px solid var(--line); border-radius:9px; padding:14px 18px;
+}
+details[open]{border-color:var(--accent)}
+summary{cursor:pointer; font-weight:600; font-size:15.5px; line-height:1.5}
+summary::marker{color:var(--struct)}
+details p{margin:10px 0 0; color:var(--muted); font-size:15px; max-width:none}
+
+.closer{
+  max-width:var(--col); margin:20px auto 0; padding:26px 28px;
+  border:1.5px solid var(--ink); border-radius:10px; background:var(--panel);
+}
+.closer p{max-width:none}
+.closer p:first-of-type{margin-top:0}
+.closer p:last-child{margin-bottom:0}
+
+@media (prefers-reduced-motion: reduce){*{animation:none !important; transition:none !important}}
+</style>
+
+<div class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Learning notes · aapke apne code se banaya gaya</p>
+  <h1>Hotel Booking app — poora samjhaava</h1>
+  <p class="standfirst">Is project mein jitne bhi React concepts use hue hain — woh kya hai, wahan kyun hai, aur aapke code ki exact line jo usko prove karti hai. Ek baar poora padh lo, phir jab bhi atko tab reference ki tarah use karo.</p>
+  <div class="meta-rule">
+    <span><b>27</b> sections</span>
+    <span><b>React 19</b> · Router 7 · Vite 8</span>
+    <span><b>21</b> components · <b>9</b> routes</span>
+    <span>backend nahi hai — jaan bujh ke</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <h4 style="margin:0 0 12px">Kya kya hai isme</h4>
+  <div class="toc-grid">
+    <a href="#s01"><span class="num">01</span>Poori picture</a>
+    <a href="#s02"><span class="num">02</span>Tech stack</a>
+    <a href="#s03"><span class="num">03</span>App start kaise hoti hai</a>
+    <a href="#s04"><span class="num">04</span>Folder structure</a>
+    <a href="#s05"><span class="num">05</span>JSX</a>
+    <a href="#s06"><span class="num">06</span>Components aur props</a>
+    <a href="#s07"><span class="num">07</span>State — useState</a>
+    <a href="#s08"><span class="num">08</span>Events aur forms</a>
+    <a href="#s09"><span class="num">09</span>Conditional rendering</a>
+    <a href="#s10"><span class="num">10</span>Lists aur keys</a>
+    <a href="#s11"><span class="num">11</span>Immutability</a>
+    <a href="#s12"><span class="num">12</span>useEffect aur cleanup</a>
+    <a href="#s13"><span class="num">13</span>useMemo</a>
+    <a href="#s14"><span class="num">14</span>State ko upar uthana</a>
+    <a href="#s15"><span class="num">15</span>Context API</a>
+    <a href="#s16"><span class="num">16</span>Custom hooks</a>
+    <a href="#s17"><span class="num">17</span>React Router</a>
+    <a href="#s18"><span class="num">18</span>Nested routes aur Outlet</a>
+    <a href="#s19"><span class="num">19</span>URL bhi ek state hai</a>
+    <a href="#s20"><span class="num">20</span>key se component reset</a>
+    <a href="#s21"><span class="num">21</span>Third-party providers</a>
+    <a href="#s22"><span class="num">22</span>Vite, env vars, assets</a>
+    <a href="#s23"><span class="num">23</span>Tailwind CSS</a>
+    <a href="#s24"><span class="num">24</span>Teen flows, shuru se aakhir tak</a>
+    <a href="#s25"><span class="num">25</span>Render lifecycle</a>
+    <a href="#s26"><span class="num">26</span>Kya missing hai</a>
+    <a href="#s27"><span class="num">27</span>Khud ko test karo</a>
+  </div>
+</nav>
+
+<!-- 01 -->
+<h2 id="s01"><span class="n">Section 01</span>Poori picture</h2>
+
+<p>Aapne ek <b>single-page application (SPA)</b> banaya hai. Matlab browser sirf <em>ek</em> HTML file aur ek JavaScript bundle download karta hai, aur uske baad JavaScript hi screen ka content badalta rehta hai. "Hotels" pe click karne se server se nayi page nahi maangi jaati — React bas alag components render kar deta hai.</p>
+
+<p>App ke do side hain, aur dono ka dimaag ek hi hai.</p>
+
+<figure class="dg">
+  <div class="split">
+    <div class="stack">
+      <div class="box acc" style="width:100%"><b>Guest side</b><small>koi bhi visitor</small></div>
+      <span class="arw">↓</span>
+      <div class="box" style="width:100%"><b>Home</b><small>hero, search, featured rooms</small></div>
+      <span class="arw">↓</span>
+      <div class="box" style="width:100%"><b>All Rooms</b><small>filter, sort, city se search</small></div>
+      <span class="arw">↓</span>
+      <div class="box" style="width:100%"><b>Room Details</b><small>dates chuno → availability check → book</small></div>
+      <span class="arw">↓</span>
+      <div class="box" style="width:100%"><b>My Bookings</b><small>pay ya cancel</small></div>
+    </div>
+    <div class="stack">
+      <div class="box vlt" style="width:100%"><b>Owner side</b><small>hotel register karne ke baad khulta hai</small></div>
+      <span class="arw">↓</span>
+      <div class="box" style="width:100%"><b>Register Hotel</b><small>modal form → isOwner true ho jaata hai</small></div>
+      <span class="arw">↓</span>
+      <div class="box" style="width:100%"><b>Dashboard</b><small>total bookings aur revenue</small></div>
+      <span class="arw">↓</span>
+      <div class="box" style="width:100%"><b>Add Room</b><small>images, price, amenities</small></div>
+      <span class="arw">↓</span>
+      <div class="box" style="width:100%"><b>List Room</b><small>availability on/off</small></div>
+    </div>
+  </div>
+  <figcaption>Do alag experiences, lekin ek hi React app — dono same shared state ko padhte aur badalte hain.</figcaption>
+</figure>
+
+<div class="aside">
+  <span class="lbl">Sabse important baat</span>
+  <p>Jo room ek guest book karta hai aur jo room owner add karta hai — dono <em>memory mein ek hi array</em> hain. Owner dashboard se room add karo, phir <span class="file">/rooms</span> kholo — woh wahan already dikh raha hoga. Yahi shared state hai, aur Context isko possible banata hai.</p>
+</div>
+
+<!-- 02 -->
+<h2 id="s02"><span class="n">Section 02</span>Tech stack</h2>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Tool</th><th>Version</th><th>Aapke liye kya karta hai</th></tr></thead>
+  <tbody>
+  <tr><td><b>React</b></td><td>19</td><td>State ko DOM mein badalta hai. Aap batate ho screen <em>kaisi</em> dikhni chahiye; React khud sochta hai use <em>kaise</em> banana hai.</td></tr>
+  <tr><td><b>React DOM</b></td><td>19</td><td>React ka woh hissa jo specifically browser se baat karta hai. Mobile ke liye alag hota hai.</td></tr>
+  <tr><td><b>React Router</b></td><td>7</td><td>URL ko component se jodta hai. <code>Link</code>, <code>useNavigate</code>, <code>useParams</code>, nested layouts sab yahi deta hai.</td></tr>
+  <tr><td><b>Vite</b></td><td>8</td><td>Dev server (turant hot reload) + production bundler. Purane Create React App ki jagah leta hai.</td></tr>
+  <tr><td><b>Tailwind CSS</b></td><td>4</td><td>Utility classes seedha JSX mein. Har component ke liye alag CSS file ki zaroorat nahi.</td></tr>
+  <tr><td><b>Clerk</b></td><td>6</td><td>Ready-made authentication — sign-in modal, profile button, session sab handled.</td></tr>
+  <tr><td><b>ESLint</b></td><td>10</td><td>App chalane se pehle hi bugs pakad leta hai, khaas kar Rules of Hooks.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Ab dhyan do ki kya <b>nahi</b> hai: koi backend nahi, database nahi, <code>fetch</code> nahi. Saara data <span class="file">src/assets/assets.js</span> mein dummy arrays ke roop mein hai aur React state mein. Yeh jaan bujh ke kiya gaya hai — learning project mein aap front-end pe focus kar sakte ho bina server se ladhe. Section 26 mein bataya hai ki backend kaise add karoge.</p>
+
+<!-- 03 -->
+<h2 id="s03"><span class="n">Section 03</span>App start kaise hoti hai</h2>
+
+<p>Chalo shuru se aakhir tak follow karte hain — browser jo file download karta hai, wahan se screen pe pixels tak.</p>
+
+<figure class="dg">
+  <div class="stack">
+    <div class="box"><b>index.html</b><small>bas ek line matter karti hai: &lt;div id="root"&gt;&lt;/div&gt;</small></div>
+    <span class="arw txt">↓ &nbsp;module script load karta hai</span>
+    <div class="box acc"><b>src/main.jsx</b><small>createRoot(#root).render(…)</small></div>
+    <span class="arw txt">↓ &nbsp;App ko teen providers mein wrap karta hai</span>
+    <div class="box vlt"><b>src/App.jsx</b><small>Navbar + &lt;Routes&gt; + Footer</small></div>
+    <span class="arw txt">↓ &nbsp;current URL match karta hai</span>
+    <div class="box grn"><b>koi ek page component</b><small>Home · AllRooms · RoomDetails · …</small></div>
+  </div>
+  <figcaption>Screen pe jo kuch bhi dikhta hai, woh sab us ek khaali <code>#root</code> div ke andar hai.</figcaption>
+</figure>
+
+<h3><code>index.html</code> itni khaali kyun hai</h3>
+<pre><code><span class="t">&lt;body&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">id</span>=<span class="s">"root"</span><span class="t">&gt;&lt;/div&gt;</span>
+  <span class="t">&lt;script</span> <span class="a">type</span>=<span class="s">"module"</span> <span class="a">src</span>=<span class="s">"/src/main.jsx"</span><span class="t">&gt;&lt;/script&gt;</span>
+<span class="t">&lt;/body&gt;</span></code></pre>
+<p>Yeh div <b>mount point</b> hai. React iska poora control le leta hai aur andar pura interface banata hai. Agar JavaScript load hone mein fail ho jaaye to user ko blank page dikhega — yeh SPA ka permanent trade-off hai.</p>
+
+<h3><span class="file">main.jsx</span> ka provider sandwich</h3>
+
+<figure class="dg">
+  <div class="nest n1"><span class="lbl">&lt;BrowserRouter&gt;</span>
+    <p>iske neeche sabko URL aur navigation deta hai</p>
+    <div class="nest n2"><span class="lbl">&lt;ClerkProvider&gt;</span>
+      <p>iske neeche sabko logged-in user deta hai</p>
+      <div class="nest n3"><span class="lbl">&lt;AppProvider&gt;</span>
+        <p>iske neeche sabko rooms, bookings, hotel, toasts deta hai</p>
+        <div class="nest n4"><span class="lbl">&lt;App /&gt;</span>
+          <p style="margin-bottom:2px">…aur aapke likhe hue saare pages aur components</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <figcaption>Order bahut zaroori hai: <code>AppProvider</code> khud <code>useNavigate()</code> aur <code>useUser()</code> call karta hai, isliye use Router aur Clerk dono ke <em>andar</em> hona hi padega.</figcaption>
+</figure>
+
+<div class="aside careful">
+  <span class="lbl">Ek asli bug jo aapko milta</span>
+  <p>Agar <code>&lt;AppProvider&gt;</code> ko <code>&lt;BrowserRouter&gt;</code> ke bahar rakh dete, to app start hote hi crash ho jaati — kyunki <code>useNavigate()</code> ko padhne ke liye koi router context hi nahi milta. Provider nesting sirf dikhawe ke liye nahi hai, yeh ek dependency graph hai.</p>
+</div>
+
+<!-- 04 -->
+<h2 id="s04"><span class="n">Section 04</span>Folder structure, aur yeh aise kyun hai</h2>
+
+<figure class="dg">
+<pre class="tree"><span class="dim">client/</span>
+├── index.html            <span class="dim">← ekmatra asli HTML page</span>
+├── vite.config.js        <span class="dim">← plugins: react + tailwind</span>
+├── package.json          <span class="dim">← dependencies aur npm scripts</span>
+└── src/
+    ├── <span class="hi">main.jsx</span>           <span class="dim">← entry point, React yahan mount hota hai</span>
+    ├── <span class="hi">App.jsx</span>            <span class="dim">← shell + route table</span>
+    ├── index.css         <span class="dim">← Tailwind import, fonts, theme colors</span>
+    │
+    ├── assets/           <span class="dim">← images, icons, dummy data</span>
+    │   └── assets.js     <span class="dim">← assets, cities, roomsDummyData export karta hai</span>
+    │
+    ├── context/          <span class="dim">← app ka shared dimaag</span>
+    │   ├── AppContext.js     <span class="dim">createContext(null)</span>
+    │   ├── AppProvider.jsx   <span class="dim">saara state + saare actions</span>
+    │   ├── useAppContext.js  <span class="dim">woh hook jo ise padhta hai</span>
+    │   └── booking.js        <span class="dim">pure helpers: nightsBetween, createId</span>
+    │
+    ├── components/       <span class="dim">← reusable tukde, inka apna URL nahi</span>
+    │   ├── Navbar.jsx  Hero.jsx  Footer.jsx  HotelCard.jsx
+    │   ├── Title.jsx  StarRating.jsx  HotelReg.jsx
+    │   ├── FeaturedDestination.jsx  ExclusiveOffer.jsx
+    │   ├── Testimonial.jsx  NewsLetter.jsx
+    │   └── hotelOwner/   <span class="dim">sirf owner ke Navbar + Sidebar</span>
+    │
+    └── pages/            <span class="dim">← har route ke liye ek file</span>
+        ├── Home.jsx  AllRooms.jsx  RoomDetails.jsx
+        ├── MyBookings.jsx  NotFound.jsx
+        └── hotelOwner/
+            ├── Layout.jsx    <span class="dim">owner shell: Navbar + Sidebar + Outlet</span>
+            ├── Dashboard.jsx  AddRoom.jsx  ListRoom.jsx</pre>
+  <figcaption>Simple rule jo sab clear rakhta hai: <b>pages</b> ka URL hota hai, <b>components</b> ka nahi.</figcaption>
+</figure>
+
+<div class="aside good">
+  <span class="lbl">context/ ek nahi, chaar files kyun hai</span>
+  <p>React Fast Refresh — woh hot reload jo save karne pe aapka state bacha ke rakhta hai — tabhi theek se kaam karta hai jab file mein <em>sirf components</em> export ho. Isliye <code>createContext</code> aur <code>useAppContext</code> hook alag files mein rakhe, taaki <span class="file">AppProvider.jsx</span> mein sirf component rahe. ESLint ka <code>react-refresh/only-export-components</code> rule bilkul yahi cheez bacha raha hai.</p>
+</div>
+
+<!-- 05 -->
+<h2 id="s05"><span class="n">Section 05</span>JSX — HTML jaisa dikhne wala JavaScript</h2>
+
+<p>JSX na HTML hai, na koi templating language. Yeh asal mein <b>function calls ka shortcut</b> hai. Vite isko:</p>
+<pre><code><span class="t">&lt;p</span> <span class="a">className</span>=<span class="s">"text-gray-500"</span><span class="t">&gt;</span>{room.hotel.city}<span class="t">&lt;/p&gt;</span></code></pre>
+<p>lagbhag isme convert kar deta hai:</p>
+<pre><code><span class="f">jsx</span>(<span class="s">'p'</span>, { className: <span class="s">'text-gray-500'</span>, children: room.hotel.city })</code></pre>
+
+<p>Isi se saare rules samajh aa jaate hain jo aapko yaad karne pade the:</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Rule</th><th>Wajah</th><th>Aapke code mein</th></tr></thead>
+  <tbody>
+  <tr><td><code>className</code>, <code>class</code> nahi</td><td><code>class</code> JavaScript ka reserved keyword hai</td><td>har jagah</td></tr>
+  <tr><td><code>htmlFor</code>, <code>for</code> nahi</td><td>wahi wajah</td><td><span class="file">Hero.jsx</span> ke labels</td></tr>
+  <tr><td>Ek hi root element return karo</td><td>function ek hi value return karta hai</td><td>har component</td></tr>
+  <tr><td><code>{ }</code> se JS mein jaate ho</td><td>andar jo bhi hai woh ek expression hai</td><td><code>{currency}{room.pricePerNight}</code></td></tr>
+  <tr><td>Tags self-close hone chahiye</td><td><code>&lt;img /&gt;</code>, <code>&lt;input /&gt;</code></td><td><span class="file">HotelCard.jsx</span></td></tr>
+  <tr><td>Component ka naam capital se</td><td>chhota matlab DOM tag, bada matlab aapka component</td><td><code>&lt;StarRating /&gt;</code> vs <code>&lt;div&gt;</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<p><code>{ }</code> ke andar aap <b>expression</b> daal sakte ho, statement kabhi nahi. Isiliye aapko <code>if</code> ki jagah ternary aur <code>&amp;&amp;</code> dikhte hain:</p>
+<pre><code><span class="c">// chalega — ternary ki ek value hoti hai</span>
+{booking.isPaid ? <span class="s">"Paid"</span> : <span class="s">"Unpaid"</span>}
+
+<span class="c">// nahi chalega — `if` statement hai, uski koi value nahi hoti</span>
+{<span class="k">if</span> (booking.isPaid) …}</code></pre>
+
+<p>Template literals se aap class strings conditionally bana sakte ho — yeh pattern aapke poore Navbar mein hai:</p>
+<pre><code>className={`fixed top-0 w-full ${isScrolled ? <span class="s">"bg-white/80 shadow-md"</span> : <span class="s">"py-4"</span>}`}</code></pre>
+
+<!-- 06 -->
+<h2 id="s06"><span class="n">Section 06</span>Components aur props</h2>
+
+<p>Component matlab <b>ek function jo props leta hai aur JSX return karta hai</b>. Bas, itni si definition hai. Props uske parameters hain — data jo parent se child ki taraf <em>neeche</em> behta hai.</p>
+
+<p>Aapka <span class="file">Title.jsx</span> project ka sabse saaf example hai:</p>
+<pre><code><span class="k">const</span> <span class="f">Title</span> = ({ title, subTitle, align, font }) =&gt; (
+  <span class="t">&lt;div</span> <span class="a">className</span>={`flex flex-col items-center text-center
+    ${align === <span class="s">"left"</span> &amp;&amp; <span class="s">"md:items-start md:text-left"</span>}`}<span class="t">&gt;</span>
+    <span class="t">&lt;h1</span> <span class="a">className</span>={`text-4xl ${font || <span class="s">"font-playfair"</span>}`}<span class="t">&gt;</span>{title}<span class="t">&lt;/h1&gt;</span>
+    <span class="t">&lt;p</span> <span class="a">className</span>=<span class="s">"text-sm text-gray-500/90 mt-2"</span><span class="t">&gt;</span>{subTitle}<span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;/div&gt;</span>
+);</code></pre>
+
+<p>Ek baar likha, paanch jagah alag-alag tarike se use hua:</p>
+<pre><code><span class="t">&lt;Title</span> <span class="a">title</span>=<span class="s">"Featured Destination"</span> <span class="a">subTitle</span>=<span class="s">"Discover our handpicked…"</span> <span class="t">/&gt;</span>
+<span class="t">&lt;Title</span> <span class="a">align</span>=<span class="s">"left"</span> <span class="a">font</span>=<span class="s">"outfit"</span> <span class="a">title</span>=<span class="s">"Dashboard"</span> <span class="a">subTitle</span>=<span class="s">"Monitor your…"</span> <span class="t">/&gt;</span></code></pre>
+
+<h3>Chaar props patterns jo aapne use kiye</h3>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Pattern</th><th>Kya karta hai</th><th>Kahan</th></tr></thead>
+  <tbody>
+  <tr><td><span class="badge b-acc">Destructuring</span></td><td>Props ko seedha parameter list mein khol lo — <code>({ room, index })</code> har jagah <code>props.room</code> likhne se behtar hai</td><td><span class="file">HotelCard.jsx</span></td></tr>
+  <tr><td><span class="badge b-grn">Default values</span></td><td><code>({ rating = 4 })</code> aur <code>({ selected = false, onChange = () =&gt; {} })</code> — prop bhool bhi jao to component crash nahi hoga</td><td><span class="file">StarRating.jsx</span>, <span class="file">AllRooms.jsx</span></td></tr>
+  <tr><td><span class="badge b-vlt">children</span></td><td><code>AppProvider({ children })</code> — jo bhi wrap karoge woh us slot mein render hoga. Har provider aur layout aise hi kaam karta hai</td><td><span class="file">AppProvider.jsx</span></td></tr>
+  <tr><td><span class="badge b-wrn">Function props</span></td><td><code>onChange</code> ek <em>function</em> hai jo neeche bheja gaya. Child use call karta hai, parent decide karta hai kya hoga — data neeche, events upar</td><td>CheckBox / RadioButton in <span class="file">AllRooms.jsx</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="aside careful">
+  <span class="lbl">Props read-only hote hain</span>
+  <p>Child kabhi bhi <code>room.pricePerNight = 500</code> nahi likh sakta. Agar child ko kuch badalna hai to parent ek function neeche bhejta hai jise child call kare. Yeh one-way flow hi wajah hai ki React apps bade hone par bhi predictable rehti hain.</p>
+</div>
+
+<h3>Home page ka component tree</h3>
+<figure class="dg">
+<pre class="tree"><span class="hi">App</span>
+├── <span class="hi">Navbar</span>            <span class="dim">isOwner, setShowHotelReg, Clerk user padhta hai</span>
+├── <span class="hi">HotelReg</span>          <span class="dim">sirf jab showHotelReg === true</span>
+├── <span class="hi">Home</span>
+│   ├── <span class="hi">Hero</span>          <span class="dim">search form → /rooms?destination=…</span>
+│   ├── <span class="hi">FeaturedDestination</span>
+│   │   ├── <span class="hi">Title</span>
+│   │   └── <span class="hi">HotelCard</span> ×4 <span class="dim">rooms.slice(0, 4) se</span>
+│   ├── <span class="hi">ExclusiveOffer</span>
+│   ├── <span class="hi">Testimonial</span> → <span class="hi">StarRating</span>
+│   └── <span class="hi">NewsLetter</span>
+└── <span class="hi">Footer</span></pre>
+  <figcaption>Composition — chhote components ko jodkar bade banana. Yahan koi bhi component zaroorat se lamba nahi hai.</figcaption>
+</figure>
+
+<!-- 07 -->
+<h2 id="s07"><span class="n">Section 07</span>State — <code>useState</code></h2>
+
+<p><b>Props bahar se aate hain; state component ki apni cheez hai.</b> State woh memory hai jo re-render ke baad bhi bachi rehti hai, aur use badalna hi React ko re-render karne ka signal deta hai.</p>
+
+<pre><code><span class="k">const</span> [destination, setDestination] = <span class="f">useState</span>(<span class="s">""</span>);
+<span class="c">//     ↑ abhi ki value  ↑ badalne ka ekmatra tarika  ↑ starting value</span></code></pre>
+
+<p>Aapka <span class="file">Hero.jsx</span> chaar state rakhta hai, har form field ke liye ek:</p>
+<pre><code><span class="k">const</span> [destination, setDestination] = <span class="f">useState</span>(<span class="s">""</span>);
+<span class="k">const</span> [checkIn,     setCheckIn]     = <span class="f">useState</span>(<span class="s">""</span>);
+<span class="k">const</span> [checkOut,    setCheckOut]    = <span class="f">useState</span>(<span class="s">""</span>);
+<span class="k">const</span> [guests,      setGuests]      = <span class="f">useState</span>(<span class="i">1</span>);</code></pre>
+
+<figure class="dg">
+  <div class="row">
+    <div class="box"><b>User type karta hai</b><small>onChange chalta hai</small></div>
+    <span class="arw">→</span>
+    <div class="box acc"><b>setDestination("Dubai")</b><small>update queue mein lag gaya</small></div>
+    <span class="arw">→</span>
+    <div class="box vlt"><b>React re-render karta hai</b><small>Hero() dobara chalta hai</small></div>
+    <span class="arw">→</span>
+    <div class="box grn"><b>Input mein "Dubai" dikhta hai</b><small>value={destination}</small></div>
+  </div>
+  <figcaption>Yeh hai state loop. App ka har interaction is circle ka ek chakkar hai.</figcaption>
+</figure>
+
+<h3>Teen cheezein jahan sabhi phaste hain</h3>
+
+<p><b>1. State set karne se variable turant nahi badalta.</b></p>
+<pre><code><span class="f">setGuests</span>(<span class="i">3</span>);
+<span class="f">console</span>.log(guests); <span class="c">// abhi bhi PURANI value — is render ka `guests` ek const hai</span></code></pre>
+<p>Nayi value <em>agle</em> render mein dikhegi. Samajhne ka aasan tarika: re-render matlab aapke component function ko dobara call karna, nayi values ke saath.</p>
+
+<p><b>2. Jab nayi value purani pe depend karti ho, to updater function use karo.</b> Aapne <span class="file">AppProvider.jsx</span> mein yeh har jagah sahi kiya hai:</p>
+<pre><code><span class="f">setRooms</span>((prev) =&gt; [room, ...prev]);   <span class="c">// safe</span>
+<span class="f">setRooms</span>([room, ...rooms]);            <span class="c">// purana `rooms` pakad sakta hai</span></code></pre>
+
+<p><b>3. Lazy initial state.</b> Aapka Navbar function wala form use karta hai taaki <code>window.scrollY</code> sirf ek baar mount pe padha jaaye, har render pe nahi:</p>
+<pre><code><span class="k">const</span> [atTop, setAtTop] = <span class="f">useState</span>(() =&gt; window.scrollY &lt;= <span class="i">10</span>);</code></pre>
+
+<h3>Poore app ka state inventory</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Kahan</th><th>State</th><th>Wahan kyun hai</th></tr></thead>
+  <tbody>
+  <tr><td><span class="file">AppProvider</span></td><td>rooms, bookings, hotel, isOwner, showHotelReg, searchedCities, toast</td><td>Door-door ke components ko chahiye → global</td></tr>
+  <tr><td><span class="file">Hero</span></td><td>destination, checkIn, checkOut, guests</td><td>Sirf search form ko matlab hai → local</td></tr>
+  <tr><td><span class="file">AllRooms</span></td><td>openFilters, selectedRoomTypes, selectedPriceRanges, sortOption</td><td>Sirf is page ke filter panel ko chahiye → local</td></tr>
+  <tr><td><span class="file">RoomDetails</span></td><td>mainImage, checkInDate, checkOutDate, guests, availability</td><td>Har room pe reset hona chahiye → local</td></tr>
+  <tr><td><span class="file">Navbar</span></td><td>atTop, isMenuOpen</td><td>Sirf dikhne ka mamla → local</td></tr>
+  <tr><td><span class="file">AddRoom</span></td><td>images, inputs</td><td>Draft data, submit ke baad phenk dete hain → local</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="aside good">
+  <span class="lbl">Yeh rule aapne bina soche follow kiya</span>
+  <p>State ko jitna <em>local</em> rakh sako, rakho; tabhi upar uthao jab doosre component ko sach mein chahiye ho. <code>isMenuOpen</code> ko Context mein daalna bhi kaam karta — aur mobile menu kholne pe poori app re-render ho jaati.</p>
+</div>
+
+<h3>Object state: AddRoom wala pattern</h3>
+<p>Paanch alag <code>useState</code> ki jagah, <span class="file">AddRoom.jsx</span> related fields ko ek object mein rakhta hai. Update karte waqt <b>pehle copy, phir override</b> karna padta hai:</p>
+<pre><code><span class="k">const</span> [inputs, setInputs] = <span class="f">useState</span>({
+  roomType: <span class="s">""</span>,
+  pricePerNight: <span class="s">""</span>,
+  amenities: { <span class="s">"Free WiFi"</span>: <span class="k">false</span>, <span class="s">"Free Breakfast"</span>: <span class="k">false</span>, <span class="c">/* … */</span> },
+});
+
+<span class="c">// ek nested amenity toggle karna — HAR level pe spread karo</span>
+<span class="f">setInputs</span>((prev) =&gt; ({
+  ...prev,
+  amenities: { ...prev.amenities, [amenity]: !prev.amenities[amenity] },
+}));</code></pre>
+<div class="aside">
+  <span class="lbl">Dono spread kyun zaroori hain</span>
+  <p>Andar wala <code>...prev.amenities</code> chhoda to baaki chaar checkboxes mit jayenge. Bahar wala <code>...prev</code> chhoda to roomType aur price udd jayenge.</p>
+</div>
+
+<!-- 08 -->
+<h2 id="s08"><span class="n">Section 08</span>Events aur controlled forms</h2>
+
+<p>React ke events DOM events jaise lagte hain lekin hain <b>synthetic</b> — React inhe wrap karta hai taaki sab browsers mein ek jaisa behave karein. Inhe props ki tarah lagate ho, camelCase mein: <code>onClick</code>, <code>onChange</code>, <code>onSubmit</code>, <code>onKeyDown</code>.</p>
+
+<h3>Controlled inputs</h3>
+<p>Input "controlled" tab kehlata hai jab React state hi sach ka ekmatra source ho:</p>
+<pre><code><span class="t">&lt;input</span>
+  <span class="a">value</span>={destination}                              <span class="c">// state → input</span>
+  <span class="a">onChange</span>={(e) =&gt; <span class="f">setDestination</span>(e.target.value)}  <span class="c">// input → state</span>
+<span class="t">/&gt;</span></code></pre>
+
+<figure class="dg">
+  <div class="row">
+    <div class="box acc"><b>state</b><small>destination = "Du"</small></div>
+    <span class="arw">→</span>
+    <div class="box"><b>&lt;input value&gt;</b><small>"Du" dikhata hai</small></div>
+    <span class="arw">→</span>
+    <div class="box wrn"><b>user "b" type karta hai</b><small>onChange(e)</small></div>
+    <span class="arw">↻</span>
+    <div class="box acc"><b>setDestination("Dub")</b></div>
+  </div>
+  <figcaption>Ek band loop — DOM ke paas kabhi aisi cheez nahi hoti jo state ko pata na ho.</figcaption>
+</figure>
+
+<h3>Form submit</h3>
+<p>App ka har form sabse pehle <code>event.preventDefault()</code> call karta hai. Warna browser poora page reload kar dega aur aapki SPA zero se restart ho jayegi:</p>
+<pre><code><span class="k">const</span> <span class="f">handleSearch</span> = (event) =&gt; {
+  event.<span class="f">preventDefault</span>();          <span class="c">// browser ka apna submit roko</span>
+  <span class="f">rememberCity</span>(destination.<span class="f">trim</span>());
+  <span class="k">const</span> params = <span class="k">new</span> <span class="f">URLSearchParams</span>();
+  <span class="k">if</span> (destination.<span class="f">trim</span>()) params.<span class="f">set</span>(<span class="s">"destination"</span>, destination.<span class="f">trim</span>());
+  <span class="f">navigate</span>(`/rooms?${params.<span class="f">toString</span>()}`);
+};</code></pre>
+
+<h3>Form ki chhoti-chhoti cheezein jo aapne sahi ki</h3>
+<ul>
+  <li><b>Dates aapas mein jude hain</b> — check-in ko check-out se aage set karo to check-out apne aap khaali ho jaata hai (<span class="file">Hero.jsx:84</span>, <span class="file">RoomDetails.jsx:149</span>).</li>
+  <li><b>Dynamic <code>min</code></b> — <code>min={checkInDate || today()}</code> se galat dates calendar mein select hi nahi hoti.</li>
+  <li><b>Jab tak valid na ho tab tak disabled</b> — check-out <code>disabled={!checkInDate}</code> hai.</li>
+  <li><b>Bubbling roka gaya</b> — <span class="file">HotelReg.jsx</span> mein overlay pe <code>onClick={close}</code> hai lekin form pe <code>onClick={(e) =&gt; e.stopPropagation()}</code>, isliye dialog ke andar click karne se woh band nahi hota. Yeh modal ka standard pattern hai.</li>
+</ul>
+
+<!-- 09 -->
+<h2 id="s09"><span class="n">Section 09</span>Conditional rendering</h2>
+
+<p>Chaar tarike, aur chaaron aapke code mein maujood hain:</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Tarika</th><th>Aapke code se example</th><th>Kab use karo</th></tr></thead>
+  <tbody>
+  <tr><td><code>&amp;&amp;</code></td><td><code>{showHotelReg &amp;&amp; &lt;HotelReg /&gt;}</code></td><td>ya to dikhao, ya kuch mat dikhao</td></tr>
+  <tr><td><code>? :</code></td><td><code>{isOwner ? "Dashboard" : "List Your Hotel"}</code></td><td>do mein se ek</td></tr>
+  <tr><td>Early <code>return</code></td><td><code>if (rooms.length === 0) return null;</code></td><td>poora component hi skip karna ho</td></tr>
+  <tr><td>Ternary block</td><td><code>{bookings.length === 0 ? &lt;Empty/&gt; : &lt;Table/&gt;}</code></td><td>do alag poore layouts</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="aside careful">
+  <span class="lbl">&amp;&amp; ka chakkar</span>
+  <p><code>{items.length &amp;&amp; &lt;List/&gt;}</code> array khaali hone par screen pe seedha <b>0</b> chhaap deta hai — kyunki <code>0</code> falsy to hai lekin phir bhi ek valid React child hai. Hamesha saaf comparison likho: <code>{items.length &gt; 0 &amp;&amp; …}</code>. Aapka <span class="file">Hero.jsx:128</span> yeh sahi karta hai.</p>
+</div>
+
+<h3>Conditional layout: owner ka shell</h3>
+<p><span class="file">App.jsx</span> ek boolean se owner routes pe public chrome chhupa deta hai:</p>
+<pre><code><span class="k">const</span> isOwnerPath = pathname.<span class="f">startsWith</span>(<span class="s">"/owner"</span>);
+<span class="c">// …</span>
+{!isOwnerPath &amp;&amp; <span class="t">&lt;Navbar /&gt;</span>}
+<span class="c">// … routes …</span>
+{!isOwnerPath &amp;&amp; <span class="t">&lt;Footer /&gt;</span>}</code></pre>
+
+<h3>Empty states</h3>
+<p>Aapne <em>har</em> list ke liye empty state likha hai — filter se koi room nahi mila, abhi koi booking nahi, koi room list nahi kiya, dashboard pe koi booking nahi. Yeh asli UX ki aadat hai jo zyadatar tutorials chhod dete hain. Sirf headers wali khaali table toota hua lagta hai; "Browse Rooms" button wala message jaan bujh ke banaya hua lagta hai.</p>
+
+<!-- 10 -->
+<h2 id="s10"><span class="n">Section 10</span>Lists render karna aur <code>key</code> prop</h2>
+
+<p>Aap arrays ko <code>.map()</code> se render karte ho, jo har data item ko ek element bana deta hai:</p>
+<pre><code>{filteredRooms.<span class="f">map</span>((room) =&gt; (
+  <span class="t">&lt;div</span> <span class="a">key</span>={room._id}<span class="t">&gt;</span>
+    <span class="t">&lt;img</span> <span class="a">src</span>={room.images[<span class="i">0</span>]} <span class="a">alt</span>={`${room.hotel.name} room`} <span class="t">/&gt;</span>
+    <span class="t">&lt;p&gt;</span>{room.hotel.name}<span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;/div&gt;</span>
+))}</code></pre>
+
+<h3><code>key</code> optional kyun nahi hai</h3>
+<p><code>key</code> React ke liye list item ka pehchan-patra hai. Iske bina React sirf position se match kar sakta hai — aur jaise hi aap kuch insert, delete ya reorder karte ho, position jhoot bolne lagti hai.</p>
+
+<figure class="dg">
+  <div class="split">
+    <div class="stack">
+      <div class="box wrn" style="width:100%"><b>key = index</b><small>insert pe toot jaata hai</small></div>
+      <p style="font-family:var(--mono); font-size:12.5px; color:var(--muted); margin:8px 0 0">pehle &nbsp;[0:A, 1:B]</p>
+      <span class="arw txt">↓ C ko aage jodo</span>
+      <p style="font-family:var(--mono); font-size:12.5px; color:var(--muted); margin:0">baad mein &nbsp;[0:C, 1:A, 2:B]</p>
+      <p style="font-size:13.5px; margin:10px 0 0">React samajhta hai ki item 0 ka bas <em>text badla</em> A se C, aur A ka hi DOM node reuse kar leta hai — scroll position, focus, input values sab wahi ke wahi reh jaate hain.</p>
+    </div>
+    <div class="stack">
+      <div class="box grn" style="width:100%"><b>key = room._id</b><small>pakki pehchan</small></div>
+      <p style="font-family:var(--mono); font-size:12.5px; color:var(--muted); margin:8px 0 0">pehle &nbsp;[a1:A, b2:B]</p>
+      <span class="arw txt">↓ C ko aage jodo</span>
+      <p style="font-family:var(--mono); font-size:12.5px; color:var(--muted); margin:0">baad mein &nbsp;[c3:C, a1:A, b2:B]</p>
+      <p style="font-size:13.5px; margin:10px 0 0">React dekhta hai c3 naya hai aur a1/b2 bas khisak gaye. Woh ek node insert karta hai aur baaki ko bilkul haath nahi lagata.</p>
+    </div>
+  </div>
+  <figcaption>Yeh yahan sach mein matter karta hai: <code>addRoom</code> aur <code>bookRoom</code> dono <code>[naya, ...prev]</code> se shuru mein jodte hain.</figcaption>
+</figure>
+
+<p>Isiliye <span class="file">booking.js</span> exist karta hai:</p>
+<pre><code><span class="k">let</span> idCounter = <span class="i">0</span>;
+<span class="k">export const</span> <span class="f">createId</span> = (prefix) =&gt;
+  `${prefix}_${<span class="f">Date</span>.<span class="f">now</span>().<span class="f">toString</span>(<span class="i">36</span>)}${idCounter++}`;</code></pre>
+<p>Sirf timestamp kaafi nahi tha — ek hi millisecond mein do rooms add ho jaayein to id takra jaati. Counter uniqueness pakka karta hai. Asli app mein yeh id database deta.</p>
+
+<div class="aside">
+  <span class="lbl">Index kab chalega</span>
+  <p>Index ko key banana tab theek hai jab list kabhi reorder na ho, kabhi filter na ho, aur items ka apna koi state na ho — isiliye <span class="file">StarRating.jsx</span> mein <code>key={index}</code> (hamesha paanch fixed stars) bilkul sahi hai.</p>
+</div>
+
+<!-- 11 -->
+<h2 id="s11"><span class="n">Section 11</span>Immutability — har update ke peeche ka rule</h2>
+
+<p>React yeh decide karta hai ki re-render karna hai ya nahi, purane aur naye state ka <em>reference</em> compare karke. Agar aap array ko jagah pe hi mutate kar do to reference wahi rehta hai — React ko lagta hai kuch badla hi nahi, aur UI chupchaap update hona band ho jaata hai.</p>
+
+<pre><code><span class="c">// mutation — wahi array reference, React ignore kar dega</span>
+rooms.<span class="f">push</span>(newRoom);
+<span class="f">setRooms</span>(rooms);
+
+<span class="c">// har baar naya array</span>
+<span class="f">setRooms</span>((prev) =&gt; [newRoom, ...prev]);</code></pre>
+
+<h3>Chaar operations, jaise aapne likhe</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Kaam</th><th>Aapka code</th><th>Kahan</th></tr></thead>
+  <tbody>
+  <tr><td><b>Add</b></td><td><code>setRooms((prev) =&gt; [room, ...prev])</code></td><td>addRoom</td></tr>
+  <tr><td><b>Ek ko update</b></td><td><code>prev.map(r =&gt; r._id === id ? {...r, isAvailable: !r.isAvailable} : r)</code></td><td>toggleRoomAvailability</td></tr>
+  <tr><td><b>Remove</b></td><td><code>prev.filter(b =&gt; b._id !== bookingId)</code></td><td>cancelBooking</td></tr>
+  <tr><td><b>Nested update</b></td><td><code>{...prev, amenities: {...prev.amenities, [k]: v}}</code></td><td>AddRoom</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="aside good">
+  <span class="lbl">Yeh chaar yaad kar lo</span>
+  <p>Update ke liye <code>map</code>, delete ke liye <code>filter</code>, add ke liye spread, aur nested ke liye har level pe spread. React mein aap zindagi bhar jitne bhi state updates likhoge, woh inhi chaar mein se ek honge. Dhyan do ki yeh sab <em>non-mutating</em> methods hain — <code>push</code>, <code>splice</code>, <code>sort</code>, <code>reverse</code> sab mutate karte hain, isliye <span class="file">AllRooms.jsx</span> mein <code>[...sorted].sort(…)</code> likha hai, <code>sorted.sort(…)</code> nahi.</p>
+</div>
+
+<!-- 12 -->
+<h2 id="s12"><span class="n">Section 12</span><code>useEffect</code> aur cleanup</h2>
+
+<p>Rendering pure honi chahiye: same props aur state andar, same JSX bahar, aur kuch bhi bahar ka haath na lage. Lekin asli apps ko bahar ki duniya chhuni padti hai — scroll listeners, timers, document body. <code>useEffect</code> woh darwaaza hai jo React ke paint karne ke <b>baad</b> chalta hai.</p>
+
+<pre><code><span class="f">useEffect</span>(() =&gt; {
+  <span class="c">/* effect */</span>
+  <span class="k">return</span> () =&gt; { <span class="c">/* cleanup */</span> };
+}, [deps]);</code></pre>
+
+<figure class="dg">
+  <div class="stack" style="gap:14px">
+    <div class="row">
+      <div class="box"><b>[ ]</b><small>khaali array</small></div><span class="arw">→</span>
+      <div class="box grn"><b>ek hi baar chalega</b><small>sirf mount pe</small></div>
+    </div>
+    <div class="row">
+      <div class="box"><b>[toast]</b><small>dependencies ke saath</small></div><span class="arw">→</span>
+      <div class="box acc"><b>mount pe, aur jab bhi toast badle</b></div>
+    </div>
+    <div class="row">
+      <div class="box"><b>array hi nahi</b><small>likha hi nahi</small></div><span class="arw">→</span>
+      <div class="box wrn"><b>har render ke baad chalega</b><small>lagbhag hamesha bug hota hai</small></div>
+    </div>
+  </div>
+  <figcaption>Dependency array hi poora API hai. Yeh sahi kar lo to effects simple ho jaate hain.</figcaption>
+</figure>
+
+<h3>Aapke project ka har effect</h3>
+
+<p><b>1 · Navigate karte hi upar scroll</b> — <span class="file">App.jsx:23</span></p>
+<pre><code><span class="f">useEffect</span>(() =&gt; {
+  window.<span class="f">scrollTo</span>(<span class="i">0</span>, <span class="i">0</span>);
+}, [pathname]);</code></pre>
+<p>Iske bina, room list ke neeche se detail page pe jaate hi aap nayi page ke beech mein gir jaate. Har SPA ko yeh router ki aadat theek karni padti hai. Yahan cleanup ki zaroorat nahi — kuch subscribe hi nahi kiya.</p>
+
+<p><b>2 · Scroll listener</b> — <span class="file">Navbar.jsx:48</span></p>
+<pre><code><span class="f">useEffect</span>(() =&gt; {
+  <span class="k">const</span> <span class="f">handleScroll</span> = () =&gt; <span class="f">setAtTop</span>(window.scrollY &lt;= <span class="i">10</span>);
+  window.<span class="f">addEventListener</span>(<span class="s">"scroll"</span>, handleScroll, { passive: <span class="k">true</span> });
+  <span class="k">return</span> () =&gt; window.<span class="f">removeEventListener</span>(<span class="s">"scroll"</span>, handleScroll);
+}, []);</code></pre>
+<p>Yahan cleanup zaroori hai. Iske bina har remount ek aur listener chipka deta jo kabhi hatta hi nahi — memory leak jo dheere-dheere badhta rehta hai.</p>
+
+<p><b>3 · Modal ya drawer khulne pe body scroll lock</b> — <span class="file">Navbar.jsx:55</span>, <span class="file">HotelReg.jsx:16</span></p>
+<pre><code><span class="f">useEffect</span>(() =&gt; {
+  document.body.style.overflow = isMenuOpen ? <span class="s">"hidden"</span> : <span class="s">""</span>;
+  <span class="k">return</span> () =&gt; { document.body.style.overflow = <span class="s">""</span>; };
+}, [isMenuOpen]);</code></pre>
+<p>Cleanup yahan bhi zaroori hai: agar menu khula hua ho aur component unmount ho jaaye, to page hamesha ke liye scroll na hone wali reh jaati.</p>
+
+<p><b>4 · Toast ka apne aap gayab hona</b> — <span class="file">AppProvider.jsx:27</span></p>
+<pre><code><span class="f">useEffect</span>(() =&gt; {
+  <span class="k">if</span> (!toast) <span class="k">return</span>;
+  <span class="k">const</span> timer = <span class="f">setTimeout</span>(() =&gt; <span class="f">setToast</span>(<span class="k">null</span>), <span class="i">3500</span>);
+  <span class="k">return</span> () =&gt; <span class="f">clearTimeout</span>(timer);
+}, [toast]);</code></pre>
+<p>Yeh cleanup code ko sirf saaf nahi, <em>sahi</em> banata hai. Pehle toast ke 3.5 second wale timer mein se 3 second beet chuke hon aur doosra toast aa jaaye — cleanup purana timer cancel kar deta hai, isliye naye message ko poore 3.5 second milte hain, aadhe second mein gayab nahi hota.</p>
+
+<p><b>5 · Escape se dialog band</b> — <span class="file">HotelReg.jsx:17</span></p>
+<pre><code><span class="k">const</span> <span class="f">onKeyDown</span> = (event) =&gt; { <span class="k">if</span> (event.key === <span class="s">"Escape"</span>) <span class="f">setShowHotelReg</span>(<span class="k">false</span>); };
+document.<span class="f">addEventListener</span>(<span class="s">"keydown"</span>, onKeyDown);
+<span class="k">return</span> () =&gt; document.<span class="f">removeEventListener</span>(<span class="s">"keydown"</span>, onKeyDown);</code></pre>
+
+<figure class="dg">
+  <div class="row">
+    <div class="box acc"><b>Mount</b><small>effect chalta hai</small></div>
+    <span class="arw">→</span>
+    <div class="box"><b>Dependency badli</b><small>pehle cleanup, phir effect dobara</small></div>
+    <span class="arw">→</span>
+    <div class="box grn"><b>Unmount</b><small>cleanup aakhri baar chalta hai</small></div>
+  </div>
+  <figcaption>Cleanup ka matlab sirf "unmount pe" nahi hai — matlab hai "agle run se pehle <em>aur</em> unmount pe".</figcaption>
+</figure>
+
+<div class="aside careful">
+  <span class="lbl">Sabse aam galti</span>
+  <p><code>useEffect</code> data nikaalne ke liye nahi hai. Agar koi value maujooda state se calculate ho sakti hai, to use render ke dauraan hi calculate karo. <span class="file">AllRooms.jsx</span> yeh sahi karta hai — <code>filteredRooms</code> <code>useMemo</code> se banta hai, kisi effect se state mein nahi thoosa jaata. Effects ka kaam hai <em>React ke bahar ki cheezon se sync karna</em>.</p>
+</div>
+
+<!-- 13 -->
+<h2 id="s13"><span class="n">Section 13</span><code>useMemo</code> — mehngi calculation ko cache karna</h2>
+
+<p><span class="file">AllRooms.jsx</span> destination, room type aur price range se filter karta hai, phir sort. Yeh array pe chaar pass hain, aur yeh <em>har</em> render pe dobara chalti — mobile filter drawer kholne pe bhi, jismein sirf <code>openFilters</code> badalta hai.</p>
+
+<pre><code><span class="k">const</span> filteredRooms = <span class="f">useMemo</span>(() =&gt; {
+  <span class="k">const</span> <span class="f">matchesDestination</span> = (room) =&gt; { <span class="c">/* … */</span> };
+  <span class="k">const</span> <span class="f">matchesRoomType</span>    = (room) =&gt; { <span class="c">/* … */</span> };
+  <span class="k">const</span> <span class="f">matchesPrice</span>       = (room) =&gt; { <span class="c">/* … */</span> };
+
+  <span class="k">const</span> sorted = rooms.<span class="f">filter</span>((room) =&gt;
+    <span class="f">matchesDestination</span>(room) &amp;&amp; <span class="f">matchesRoomType</span>(room) &amp;&amp; <span class="f">matchesPrice</span>(room));
+
+  <span class="k">if</span> (sortOption === <span class="s">"Price Low to High"</span>)
+    <span class="k">return</span> [...sorted].<span class="f">sort</span>((a, b) =&gt; a.pricePerNight - b.pricePerNight);
+  <span class="c">// …</span>
+  <span class="k">return</span> sorted;
+}, [rooms, destination, selectedRoomTypes, selectedPriceRanges, sortOption]);</code></pre>
+
+<p>React result ko cache kar leta hai aur tabhi dobara calculate karta hai jab in paanch dependencies mein se koi badle. <code>openFilters</code> jaan bujh ke list mein nahi hai, isliye drawer toggle karne pe wahi cached list reuse hoti hai.</p>
+
+<figure class="dg">
+  <div class="stack" style="gap:12px">
+    <div class="row" style="gap:8px">
+      <div class="box"><b>rooms</b></div><div class="box"><b>destination</b></div><div class="box"><b>roomTypes</b></div><div class="box"><b>priceRanges</b></div><div class="box"><b>sortOption</b></div>
+    </div>
+    <span class="arw txt">↓ &nbsp;inme se koi ek badla</span>
+    <div class="box acc"><b>filteredRooms dobara calculate</b></div>
+    <span class="arw txt">↓ &nbsp;warna</span>
+    <div class="box grn"><b>cached array hi reuse</b><small>same reference, zero kaam</small></div>
+  </div>
+  <figcaption>Memoisation matlab thodi memory dekar kaam bachana.</figcaption>
+</figure>
+
+<div class="aside">
+  <span class="lbl">Har jagah mat lagana</span>
+  <p><code>useMemo</code> ki apni cost hoti hai — value store karna aur dependencies compare karna. Ise sach mein mehnge kaam ke liye use karo, ya jab stable object reference chahiye ho. Sirf 10 dummy rooms ke saath yeh performance se zyada pattern seekhne ke liye hai — jo bilkul sahi wajah hai isko likhne ki.</p>
+</div>
+
+<!-- 14 -->
+<h2 id="s14"><span class="n">Section 14</span>State ko upar uthana (lifting state up)</h2>
+
+<p>Jab do components ko ek hi data chahiye, to woh state unke sabse nazdeeki common parent mein chali jaati hai. Yahi problem aakhir mein aapko Context tak le jaati hai.</p>
+
+<figure class="dg">
+  <div class="split">
+    <div class="stack">
+      <p style="font-weight:650; margin:0 0 12px; font-size:14px">Problem</p>
+      <div class="box" style="width:100%"><b>App</b></div>
+      <span class="arw">↙ &nbsp;&nbsp;&nbsp; ↘</span>
+      <div class="row" style="gap:12px">
+        <div class="box wrn"><b>RoomDetails</b><small>booking banata hai</small></div>
+        <div class="box wrn"><b>MyBookings</b><small>usi booking ki zaroorat</small></div>
+      </div>
+      <p style="font-size:13.5px; margin-top:10px">Dono bhai-bhai hain. Koi bhi doosre ka state nahi dekh sakta.</p>
+    </div>
+    <div class="stack">
+      <p style="font-weight:650; margin:0 0 12px; font-size:14px">Solution</p>
+      <div class="box grn" style="width:100%"><b>AppProvider</b><small>bookings + bookRoom() rakhta hai</small></div>
+      <span class="arw">↙ &nbsp;&nbsp;&nbsp; ↘</span>
+      <div class="row" style="gap:12px">
+        <div class="box"><b>RoomDetails</b><small>bookRoom() call karta hai</small></div>
+        <div class="box"><b>MyBookings</b><small>bookings padhta hai</small></div>
+      </div>
+      <p style="font-size:13.5px; margin-top:10px">State upar common parent mein chali gayi; dono wahin se padhte hain.</p>
+    </div>
+  </div>
+</figure>
+
+<p><b>Prop drilling</b> woh hai jo tab hota hai jab aap state upar to utha do lekin phir haath se neeche pass karte raho:</p>
+<pre><code>App → Home → FeaturedDestination → HotelCard   <span class="c">// sirf `currency` pahunchane ke liye</span></code></pre>
+<p>Inme se do components <code>currency</code> use hi nahi karte; woh sirf courier hain. Ab isko ek dozen values se multiply karo aur har component ka signature bakwaas ban jaata hai. Yahi dard Context khatam karta hai.</p>
+
+<!-- 15 -->
+<h2 id="s15"><span class="n">Section 15</span>Context API — app ka dimaag</h2>
+
+<p>Context ek aisi value banata hai jise koi bhi descendant seedha padh sakta hai, chahe kitna bhi gehra ho, bina ek bhi beech ka prop pass kiye.</p>
+
+<figure class="dg">
+  <div class="split">
+    <div class="stack">
+      <p style="font-weight:650; margin:0 0 10px; font-size:14px">Context ke bina</p>
+      <div class="box" style="width:100%"><b>AppProvider</b><small>currency = "$"</small></div>
+      <span class="arw txt">↓ prop</span>
+      <div class="box wrn" style="width:100%"><b>Home</b><small>use hi nahi karta</small></div>
+      <span class="arw txt">↓ prop</span>
+      <div class="box wrn" style="width:100%"><b>FeaturedDestination</b><small>use hi nahi karta</small></div>
+      <span class="arw txt">↓ prop</span>
+      <div class="box grn" style="width:100%"><b>HotelCard</b><small>aakhir mein use hua</small></div>
+    </div>
+    <div class="stack">
+      <p style="font-weight:650; margin:0 0 10px; font-size:14px">Context ke saath</p>
+      <div class="box acc" style="width:100%"><b>AppProvider</b><small>value={{ currency, rooms, … }}</small></div>
+      <span class="arw txt">↓ &nbsp;sabhi descendants ko broadcast</span>
+      <div class="box" style="width:100%; opacity:.5"><b>Home</b><small>kuch pass nahi karta</small></div>
+      <span class="arw" style="opacity:.45">↓</span>
+      <div class="box" style="width:100%; opacity:.5"><b>FeaturedDestination</b><small>kuch pass nahi karta</small></div>
+      <span class="arw" style="opacity:.45">↓</span>
+      <div class="box grn" style="width:100%"><b>HotelCard</b><small>useAppContext()</small></div>
+    </div>
+  </div>
+  <figcaption>Context ek taar hai jo beech wale skip kar deta hai. Yeh props ko replace nahi karta — yeh <em>drilling</em> ko replace karta hai.</figcaption>
+</figure>
+
+<h3>Teen hisse</h3>
+
+<p><b>1 · Channel banao</b> — <span class="file">context/AppContext.js</span></p>
+<pre><code><span class="k">import</span> { createContext } <span class="k">from</span> <span class="s">"react"</span>;
+<span class="k">export const</span> AppContext = <span class="f">createContext</span>(<span class="k">null</span>);</code></pre>
+
+<p><b>2 · Value provide karo</b> — <span class="file">context/AppProvider.jsx</span></p>
+<pre><code><span class="k">const</span> value = { currency, navigate, rooms, bookings, hotel, isOwner,
+                addRoom, bookRoom, payBooking, cancelBooking, <span class="c">/* … */</span> };
+
+<span class="k">return</span> <span class="t">&lt;AppContext.Provider</span> <span class="a">value</span>={value}<span class="t">&gt;</span>{children}<span class="t">&lt;/AppContext.Provider&gt;</span>;</code></pre>
+
+<p><b>3 · Use karo</b> — <span class="file">context/useAppContext.js</span></p>
+<pre><code><span class="k">export const</span> <span class="f">useAppContext</span> = () =&gt; {
+  <span class="k">const</span> context = <span class="f">useContext</span>(AppContext);
+  <span class="k">if</span> (!context) <span class="k">throw new</span> <span class="f">Error</span>(<span class="s">"useAppContext must be used inside &lt;AppProvider&gt;"</span>);
+  <span class="k">return</span> context;
+};</code></pre>
+
+<div class="aside good">
+  <span class="lbl">Yeh guard clause bahut achhi practice hai</span>
+  <p>Provider lagana bhool gaye to aapko seedha problem batane wala error milega, na ki kisi bilkul alag component ke andar se aata hua ajeeb sa <code>Cannot destructure property 'rooms' of null</code>.</p>
+</div>
+
+<h3>Aapke context mein kya-kya hai</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Kis type ka</th><th>Naam</th><th>Note</th></tr></thead>
+  <tbody>
+  <tr><td><span class="badge b-acc">Data</span></td><td>rooms, bookings, hotel, isOwner, showHotelReg, searchedCities, currency, user, currentUser</td><td>App ke nouns (cheezein)</td></tr>
+  <tr><td><span class="badge b-grn">Actions</span></td><td>registerHotel, addRoom, toggleRoomAvailability, bookRoom, payBooking, cancelBooking, rememberCity, notify</td><td>Verbs (kaam) — har state change inhi mein se ek se hota hai</td></tr>
+  <tr><td><span class="badge b-vlt">Queries</span></td><td>isRoomAvailable, dashboard</td><td>Data se nikale gaye, har render pe dobara bante hain</td></tr>
+  <tr><td><span class="badge b-wrn">Utilities</span></td><td>navigate, setIsOwner, setShowHotelReg</td><td>Aasani ke liye seedhe pass kiye gaye</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p><b>Yeh structure hi asli seekh hai.</b> Components kabhi seedha state nahi likhte — woh ek action call karte hain, aur action ke paas saare rules hote hain. <code>bookRoom</code> dekho: woh nights ginta hai, total nikalta hai, status aur timestamps lagata hai, aur id banata hai. Component bas itna kehta hai "yeh room book kar do".</p>
+
+<pre><code><span class="k">const</span> <span class="f">bookRoom</span> = ({ room, checkInDate, checkOutDate, guests }) =&gt; {
+  <span class="k">const</span> nights = <span class="f">nightsBetween</span>(checkInDate, checkOutDate);
+  <span class="k">const</span> booking = {
+    _id: <span class="f">createId</span>(<span class="s">"booking"</span>),
+    user: currentUser, room, hotel: room.hotel,
+    totalPrice: room.pricePerNight * nights,
+    guests: <span class="f">Number</span>(guests),
+    status: <span class="s">"pending"</span>, isPaid: <span class="k">false</span>,
+    <span class="c">/* … */</span>
+  };
+  <span class="f">setBookings</span>((prev) =&gt; [booking, ...prev]);
+  <span class="k">return</span> booking;
+};</code></pre>
+
+<h3>Derived state: <code>dashboard</code></h3>
+<pre><code><span class="k">const</span> dashboard = {
+  totalBookings: bookings.length,
+  totalRevenue: bookings.<span class="f">reduce</span>((sum, b) =&gt; sum + b.totalPrice, <span class="i">0</span>),
+  bookings,
+};</code></pre>
+<p>Revenue state mein <b>store nahi</b> hai — woh har render pe bookings se dobara nikalta hai. Yeh sahi decision hai: store kiya hua total us list se out of sync ho sakta hai jiska woh summary hai; derived total kabhi ho hi nahi sakta.</p>
+
+<div class="aside careful">
+  <span class="lbl">Context ki ek asli cost</span>
+  <p>Jab provider ki <code>value</code> badalti hai, to <em>har</em> consumer re-render hota hai. Aapka <code>value</code> object AppProvider ke har render pe naya banta hai, isliye wahan ka koi bhi state change <code>useAppContext</code> use karne wale sabhi components ko re-render kar deta hai. Is size pe yeh dikhta bhi nahi. Bade app mein aap ise alag-alag contexts mein baant dete — ek kam badalne wala, ek zyada — ya <code>value</code> ko <code>useMemo</code> mein wrap karte. Trade-off pata hona hi asli baat hai.</p>
+</div>
+
+<!-- 16 -->
+<h2 id="s16"><span class="n">Section 16</span>Custom hooks</h2>
+
+<p>Custom hook matlab bas ek function jiska naam <code>use</code> se shuru hota hai aur jo doosre hooks call karta hai. <code>useAppContext</code> aapka hai:</p>
+<pre><code><span class="c">// iske bina — lagbhag 14 files mein yeh dohrana padta</span>
+<span class="k">const</span> { rooms } = <span class="f">useContext</span>(AppContext);
+
+<span class="c">// iske saath — chhota bhi, aur check bhi karta hai</span>
+<span class="k">const</span> { rooms } = <span class="f">useAppContext</span>();</code></pre>
+
+<p>Teen fayde: imports ka kam shor, null check ke liye ek hi jagah, aur ek "seam" — kal ko Context ki jagah Redux ya Zustand lagana ho to aap ek file badloge aur kisi component ko pata bhi nahi chalega.</p>
+
+<h4>Rules of Hooks</h4>
+<ol>
+  <li><b>Hooks sirf top level pe call karo</b> — kabhi <code>if</code>, loop ya nested function ke andar nahi. React hooks ko call ke order se track karta hai, aur conditional calls us order ko bigaad ke state kharab kar dete hain.</li>
+  <li><b>Hooks sirf React functions se call karo</b> — components, ya doosre custom hooks se.</li>
+</ol>
+<p>Aapke <span class="file">eslint.config.js</span> ka <code>eslint-plugin-react-hooks</code> dono enforce karta hai, aur missing effect dependencies pe bhi warning deta hai. In warnings ko seriously lo — yeh aksar sach mein stale-closure bug bata rahe hote hain.</p>
+
+<div class="aside">
+  <span class="lbl">Rule 1 aapke code mein dikhta hai</span>
+  <p><span class="file">RoomDetails.jsx</span> mein bahar wala component pehle <code>useParams()</code> aur <code>useAppContext()</code> call karta hai, aur <em>uske baad</em> hi <code>&lt;NotFound /&gt;</code> return kar sakta hai. Har hook kisi bhi conditional return se pehle chalta hai.</p>
+</div>
+
+<!-- 17 -->
+<h2 id="s17"><span class="n">Section 17</span>React Router — URL se components</h2>
+
+<p>Aapka poora route table, <span class="file">App.jsx</span> se:</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>URL</th><th>Kya render hota hai</th><th>Concept</th></tr></thead>
+  <tbody>
+  <tr><td><code>/</code></td><td>Home</td><td>index route</td></tr>
+  <tr><td><code>/rooms</code></td><td>AllRooms</td><td>static path</td></tr>
+  <tr><td><code>/rooms?destination=Dubai</code></td><td>AllRooms, filtered</td><td><code>useSearchParams</code> se query string</td></tr>
+  <tr><td><code>/rooms/:id</code></td><td>RoomDetails</td><td><code>useParams</code> se dynamic segment</td></tr>
+  <tr><td><code>/my-bookings</code></td><td>MyBookings</td><td>static path</td></tr>
+  <tr><td><code>/owner</code></td><td>Layout → Dashboard</td><td>nested layout + index child</td></tr>
+  <tr><td><code>/owner/add-room</code></td><td>Layout → AddRoom</td><td>nested child</td></tr>
+  <tr><td><code>/owner/list-room</code></td><td>Layout → ListRoom</td><td>nested child</td></tr>
+  <tr><td>aur kuch bhi</td><td>NotFound</td><td>catch-all <code>*</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<pre><code><span class="t">&lt;Routes&gt;</span>
+  <span class="t">&lt;Route</span> <span class="a">path</span>=<span class="s">"/"</span> <span class="a">element</span>={<span class="t">&lt;Home /&gt;</span>} <span class="t">/&gt;</span>
+  <span class="t">&lt;Route</span> <span class="a">path</span>=<span class="s">"/rooms"</span> <span class="a">element</span>={<span class="t">&lt;AllRooms /&gt;</span>} <span class="t">/&gt;</span>
+  <span class="t">&lt;Route</span> <span class="a">path</span>=<span class="s">"/rooms/:id"</span> <span class="a">element</span>={<span class="t">&lt;RoomDetails /&gt;</span>} <span class="t">/&gt;</span>
+  <span class="t">&lt;Route</span> <span class="a">path</span>=<span class="s">"/my-bookings"</span> <span class="a">element</span>={<span class="t">&lt;MyBookings /&gt;</span>} <span class="t">/&gt;</span>
+  <span class="t">&lt;Route</span> <span class="a">path</span>=<span class="s">"/owner"</span> <span class="a">element</span>={<span class="t">&lt;Layout /&gt;</span>}<span class="t">&gt;</span>
+    <span class="t">&lt;Route</span> <span class="a">index</span> <span class="a">element</span>={<span class="t">&lt;Dashboard /&gt;</span>} <span class="t">/&gt;</span>
+    <span class="t">&lt;Route</span> <span class="a">path</span>=<span class="s">"add-room"</span> <span class="a">element</span>={<span class="t">&lt;AddRoom /&gt;</span>} <span class="t">/&gt;</span>
+    <span class="t">&lt;Route</span> <span class="a">path</span>=<span class="s">"list-room"</span> <span class="a">element</span>={<span class="t">&lt;ListRoom /&gt;</span>} <span class="t">/&gt;</span>
+  <span class="t">&lt;/Route&gt;</span>
+  <span class="t">&lt;Route</span> <span class="a">path</span>=<span class="s">"*"</span> <span class="a">element</span>={<span class="t">&lt;NotFound /&gt;</span>} <span class="t">/&gt;</span>
+<span class="t">&lt;/Routes&gt;</span></code></pre>
+
+<h3>Navigate karne ke chaar tools</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Tool</th><th>Yeh hai kya</th><th>Kab use karo</th><th>Aapne kahan use kiya</th></tr></thead>
+  <tbody>
+  <tr><td><code>&lt;Link&gt;</code></td><td>Asli <code>&lt;a&gt;</code> banata hai, click ko pakad leta hai</td><td>Jise user naye tab mein khol sake</td><td>HotelCard, Footer, NotFound</td></tr>
+  <tr><td><code>&lt;NavLink&gt;</code></td><td>Aisa Link jise pata hai woh active hai ya nahi</td><td>Nav menus jahan current page highlight karna ho</td><td>Navbar, owner Sidebar</td></tr>
+  <tr><td><code>useNavigate()</code></td><td>Code se navigate karna</td><td>Form submit ya koi action poora hone ke baad</td><td>Hero search, bookRoom, registerHotel</td></tr>
+  <tr><td><code>useLocation()</code></td><td>Current URL padhna</td><td>Conditional layout, scroll reset</td><td>App.jsx, Navbar</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="aside careful">
+  <span class="lbl">SPA ke andar khaali anchor kabhi mat use karo</span>
+  <p><code>&lt;a href="/rooms"&gt;</code> poora page reload karwa deta hai — bundle dobara download hota hai, React zero se remount hota hai, aur saara Context state khatam. Aapki saari bookings gayab ho jaati. Hamesha <code>&lt;Link to="/rooms"&gt;</code>. Exception sirf woh link hai jo sach mein app se bahar le jaaye, jaise <span class="file">RoomDetails.jsx:259</span> ka <code>tel:</code> link — woh plain anchor hi <em>hona chahiye</em>.</p>
+</div>
+
+<h3>NavLink ka render-prop jugaad</h3>
+<p>NavLink className ke liye — aur children ke liye bhi — ek <em>function</em> le sakta hai, jise <code>{ isActive }</code> milta hai:</p>
+<pre><code><span class="t">&lt;NavLink</span>
+  <span class="a">to</span>={link.path}
+  <span class="a">className</span>={({ isActive }) =&gt; `group flex flex-col ${isActive ? <span class="s">"font-medium"</span> : <span class="s">""</span>}`}<span class="t">&gt;</span>
+  {({ isActive }) =&gt; (
+    <span class="t">&lt;&gt;</span>
+      {link.name}
+      <span class="t">&lt;div</span> <span class="a">className</span>={`h-0.5 ${isActive ? <span class="s">"w-full"</span> : <span class="s">"w-0 group-hover:w-full"</span>}`} <span class="t">/&gt;</span>
+    <span class="t">&lt;/&gt;</span>
+  )}
+<span class="t">&lt;/NavLink&gt;</span></code></pre>
+<p>Isi se hover pe underline animate hoti hai aur active link pe tiki rehti hai.</p>
+
+<div class="aside">
+  <span class="lbl">end prop</span>
+  <p><span class="file">Sidebar.jsx</span> mein: <code>end={item.path === "/owner"}</code>. Iske bina Dashboard link <code>/owner/add-room</code> pe bhi active dikhta, kyunki <code>/owner</code> uska prefix hai. <code>end</code> exact match maangta hai.</p>
+</div>
+
+<!-- 18 -->
+<h2 id="s18"><span class="n">Section 18</span>Nested routes aur <code>&lt;Outlet /&gt;</code></h2>
+
+<p>Owner section mein ek shell hamesha rehta hai — upar navbar, baayen sidebar — aur sirf beech ka panel badalta hai. Nested routes yeh muft mein de dete hain.</p>
+
+<figure class="dg">
+  <div style="border:1.5px solid var(--violet); border-radius:9px; max-width:620px; margin:0 auto; overflow:hidden">
+    <div style="background:var(--violet-soft); padding:11px; text-align:center; font-weight:650; font-size:13.5px; border-bottom:1.5px solid var(--violet)">
+      Layout.jsx — owner Navbar
+    </div>
+    <div style="display:flex; min-height:180px">
+      <div style="width:148px; background:var(--violet-soft); border-right:1.5px solid var(--violet); padding:13px; font-family:var(--mono); font-size:12px; line-height:2.1">
+        <b>Sidebar</b><br>Dashboard<br>Add Room<br>List Room
+      </div>
+      <div style="flex:1; padding:18px; display:flex; align-items:center; justify-content:center">
+        <div class="box grn" style="width:100%">
+          <b>&lt;Outlet /&gt;</b>
+          <small>Dashboard · AddRoom · ListRoom<br>URL ke hisaab se badalta hai</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <figcaption>Purple frame ek baar render hoke mounted rehta hai. Sirf green slot badalta hai.</figcaption>
+</figure>
+
+<pre><code><span class="c">// pages/hotelOwner/Layout.jsx</span>
+<span class="k">const</span> <span class="f">Layout</span> = () =&gt; (
+  <span class="t">&lt;div</span> <span class="a">className</span>=<span class="s">"flex flex-col h-screen"</span><span class="t">&gt;</span>
+    <span class="t">&lt;Navbar /&gt;</span>
+    <span class="t">&lt;div</span> <span class="a">className</span>=<span class="s">"flex h-full"</span><span class="t">&gt;</span>
+      <span class="t">&lt;Sidebar /&gt;</span>
+      <span class="t">&lt;div</span> <span class="a">className</span>=<span class="s">"flex-1 p-4 pt-10 md:px-10 h-full"</span><span class="t">&gt;</span>
+        <span class="t">&lt;Outlet /&gt;</span>   <span class="c">← match hua child route yahan render hota hai</span>
+      <span class="t">&lt;/div&gt;</span>
+    <span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;/div&gt;</span>
+);</code></pre>
+
+<p>Route config mein do baatein:</p>
+<ul>
+  <li><code>&lt;Route index element={&lt;Dashboard /&gt;} /&gt;</code> — <code>index</code> matlab "default child", isliye khaali <code>/owner</code> pe Dashboard render hota hai.</li>
+  <li><code>path="add-room"</code> mein <b>shuru mein slash nahi hai</b>. Child paths relative hote hain, isliye yeh <code>/owner/add-room</code> ban jaata hai. Slash laga dete to path absolute ho jaata aur nesting toot jaati.</li>
+</ul>
+
+<div class="aside good">
+  <span class="lbl">Har page mein Sidebar dohrane se yeh behtar kyun hai</span>
+  <p>Owner pages switch karne pe Sidebar aur Navbar kabhi unmount nahi hote. Na flicker, na unke effects dobara chalte, aur unka koi bhi state navigation ke baad bhi bacha rehta hai.</p>
+</div>
+
+<!-- 19 -->
+<h2 id="s19"><span class="n">Section 19</span>URL bhi ek state hai</h2>
+
+<p>Kuch state ko <code>useState</code> ki jagah URL mein hona chahiye. Test simple hai: <b>kya yeh refresh, bookmark, ya shared link ke baad bhi bachna chahiye?</b> Agar haan, to URL mein daalo.</p>
+
+<h3><code>useParams</code> — dynamic segment</h3>
+<pre><code><span class="c">// route: &lt;Route path="/rooms/:id" element={&lt;RoomDetails /&gt;} /&gt;</span>
+<span class="k">const</span> { id } = <span class="f">useParams</span>();
+<span class="k">const</span> room = rooms.<span class="f">find</span>((item) =&gt; item._id === id);
+<span class="k">if</span> (!room) <span class="k">return</span> <span class="t">&lt;NotFound /&gt;</span>;</code></pre>
+<p>Path ka <code>:id</code> aapko <code>params.id</code> ke roop mein milta hai. Yeh guard zaroori hai — koi <code>/rooms/garbage</code> paste kar de to warna <code>room.images[0]</code> pe app crash ho jaati.</p>
+
+<h3><code>useSearchParams</code> — query string</h3>
+<pre><code><span class="k">const</span> [searchParams, setSearchParams] = <span class="f">useSearchParams</span>();
+<span class="k">const</span> destination = searchParams.<span class="f">get</span>(<span class="s">"destination"</span>) ?? <span class="s">""</span>;
+<span class="c">// clear karne ke liye:</span>
+<span class="f">setSearchParams</span>({});</code></pre>
+<p>API jaan bujh ke <code>useState</code> jaisa hi hai — ek value aur ek setter. Lekin value address bar mein rehti hai, isliye back/forward buttons ispe muft mein kaam karte hain.</p>
+
+<figure class="dg">
+  <div class="stack">
+    <div class="box"><b>Hero search form</b><small>local state: destination, dates, guests</small></div>
+    <span class="arw txt">↓ &nbsp;handleSearch URLSearchParams banata hai</span>
+    <div class="box acc"><b>navigate("/rooms?destination=Dubai&amp;checkIn=…")</b></div>
+    <span class="arw txt">↓ &nbsp;router /rooms match karta hai</span>
+    <div class="box vlt"><b>AllRooms mount hota hai</b><small>searchParams.get("destination") → "Dubai"</small></div>
+    <span class="arw txt">↓ &nbsp;useMemo ke dependency array mein jaata hai</span>
+    <div class="box grn"><b>filteredRooms dobara banta hai</b><small>share ho sakta · refresh pe bachta · bookmark ho sakta</small></div>
+  </div>
+  <figcaption>Ek page ka local state agle page ka URL state ban jaata hai. Woh link dost ko bhejo, use bhi wahi results dikhenge.</figcaption>
+</figure>
+
+<div class="aside">
+  <span class="lbl">Ek inconsistency jo fix karne layak hai</span>
+  <p>AllRooms mein <code>destination</code> URL se aata hai (shareable) jabki <code>selectedRoomTypes</code>, <code>selectedPriceRanges</code> aur <code>sortOption</code> local state hain (shareable nahi). Saare filters ko search params mein le jao aur poora filtered view linkable ban jaayega. Achha exercise hai.</p>
+</div>
+
+<!-- 20 -->
+<h2 id="s20"><span class="n">Section 20</span><code>key</code> ko reset switch ki tarah use karna</h2>
+
+<p>Yeh ek advanced pattern hai, aur aapke <span class="file">RoomDetails.jsx</span> ke neeche baitha hua hai:</p>
+
+<pre><code><span class="k">const</span> <span class="f">RoomDetails</span> = () =&gt; {
+  <span class="k">const</span> { id } = <span class="f">useParams</span>();
+  <span class="k">const</span> { rooms } = <span class="f">useAppContext</span>();
+  <span class="k">const</span> room = rooms.<span class="f">find</span>((item) =&gt; item._id === id);
+  <span class="k">if</span> (!room) <span class="k">return</span> <span class="t">&lt;NotFound /&gt;</span>;
+  <span class="k">return</span> <span class="t">&lt;RoomDetailsView</span> <span class="a">key</span>={room._id} <span class="a">room</span>={room} <span class="t">/&gt;</span>;   <span class="c">← asli jugaad</span>
+};</code></pre>
+
+<h4>Yeh kaunsi problem solve karta hai</h4>
+<p>Aap room A pe ho. Dates chun li, "Check Availability" dabaya, aur teesri photo select ki. Ab aap room B pe jaate ho. URL badal gaya, lekin React ko <em>wahi component type, wahi position</em> dikhti hai — isliye woh purana instance hi reuse kar leta hai aur uska saara state bacha ke rakhta hai. Aapko room B dikhega lekin room A ki dates aur availability result ke saath.</p>
+
+<figure class="dg">
+  <div class="split">
+    <div class="stack">
+      <div class="box wrn" style="width:100%"><b>key ke bina</b></div>
+      <p style="font-size:13px; margin:8px 0 0; color:var(--muted)">Room A → Room B</p>
+      <span class="arw">↓</span>
+      <div class="box" style="width:100%"><small>wahi instance reuse<br>mainImage abhi bhi A ki photo<br>dates abhi bhi bhari hui<br>availability abhi bhi "available"</small></div>
+    </div>
+    <div class="stack">
+      <div class="box grn" style="width:100%"><b>key={room._id} ke saath</b></div>
+      <p style="font-size:13px; margin:8px 0 0; color:var(--muted)">Room A → Room B</p>
+      <span class="arw">↓</span>
+      <div class="box" style="width:100%"><small>key badli → unmount + remount<br>fresh useState defaults<br>saaf form, saaf gallery</small></div>
+    </div>
+  </div>
+  <figcaption>Badli hui <code>key</code> React ko kehti hai "yeh alag cheez hai" — aur woh purana instance poora phenk deta hai.</figcaption>
+</figure>
+
+<p>Wrapper/view ka batwara bhi isi wajah se hai: bahar wala component route padhta hai, andar wala state rakhta hai, taaki andar wale ko poora badla ja sake. Yeh yaad rakho — "id badalne pe form kaise reset karun?" ka React ka standard jawab yahi hai.</p>
+
+<!-- 21 -->
+<h2 id="s21"><span class="n">Section 21</span>Third-party providers — Clerk</h2>
+
+<p>Clerk ek poori authentication service hai jise aapne ek wrapper aur teen hooks se laga diya. Sign-in UI, sessions, password reset — sab handled.</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>API</th><th>Kya deta hai</th><th>Aapne kahan use kiya</th></tr></thead>
+  <tbody>
+  <tr><td><code>&lt;ClerkProvider&gt;</code></td><td>Auth state ko context mein daalta hai</td><td><span class="file">main.jsx</span></td></tr>
+  <tr><td><code>useUser()</code></td><td><code>{ user }</code> — logout hone pe null</td><td>Navbar, AppProvider</td></tr>
+  <tr><td><code>useClerk()</code></td><td><code>openSignIn()</code> — modal kholta hai</td><td>Navbar ka login button</td></tr>
+  <tr><td><code>&lt;UserButton&gt;</code></td><td>Avatar aur dropdown, jisme apne actions bhi jod sakte ho</td><td>Navbar, jisme "My Bookings" item joda gaya</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p><span class="file">AppProvider.jsx</span> ka fallback wala block dhyan se dekhne layak hai:</p>
+<pre><code><span class="k">const</span> currentUser = user
+  ? { _id: user.id,
+      username: user.fullName || user.username || <span class="s">"Guest"</span>,
+      email: user.primaryEmailAddress?.emailAddress ?? <span class="s">""</span>,
+      image: user.imageUrl }
+  : userDummyData;</code></pre>
+<p>Yahan do cheezein ho rahi hain. Ek, aap Clerk ke shape ko <b>apne shape mein badal</b> rahe ho — to kal ko auth provider badalna pade to sirf yeh block badlega. Do, aap dummy user pe fall back karte ho, jisse bina login kiye bhi app poori chalti hai. Chained fallbacks (<code>||</code>) aur optional chaining (<code>?.</code>) pe dhyan do: Clerk users username ke saath bina full name ke sign up kar sakte hain, ya bina email ke bhi.</p>
+
+<div class="aside careful">
+  <span class="lbl">Client-side auth security nahi hoti</span>
+  <p><code>isOwner</code> React state mein rehta hai — koi bhi DevTools se use flip karke <code>/owner</code> tak pahunch sakta hai. Yahan chalega kyunki peeche koi asli data hai hi nahi. Production mein har rule server pe dobara check hona chahiye. Front-end sirf yeh decide karta hai kya <em>dikhana</em> hai, kabhi yeh nahi ki kya <em>allowed</em> hai.</p>
+</div>
+
+<!-- 22 -->
+<h2 id="s22"><span class="n">Section 22</span>Vite, environment variables, assets</h2>
+
+<h3>Commands</h3>
+<pre><code>npm run dev      <span class="c"># dev server, hot reload, turant start</span>
+npm run build    <span class="c"># optimised bundle dist/ mein</span>
+npm run preview  <span class="c"># dist/ ko locally serve karke asli build test karo</span>
+npm run lint     <span class="c"># poore project pe ESLint</span></code></pre>
+
+<p>Vite development mein tez isliye hai kyunki woh bundle karta hi nahi — woh aapki files native ES modules ki tarah serve karta hai aur jodne ka kaam browser pe chhod deta hai. Ek file badlo to sirf wahi module reload hota hai. Production ke liye woh Rollup pe switch karke bundle, minify, tree-shake aur filename hashing karta hai.</p>
+
+<h3>Environment variables</h3>
+<pre><code><span class="k">const</span> PUBLISHABLE_KEY = <span class="k">import</span>.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+<span class="k">if</span> (!PUBLISHABLE_KEY) {
+  <span class="k">throw new</span> <span class="f">Error</span>(<span class="s">"Missing Clerk Publishable Key. Add VITE_CLERK_PUBLISHABLE_KEY to client/.env"</span>);
+}</code></pre>
+<ul>
+  <li><code>import.meta.env</code> hai, <code>process.env</code> nahi — woh Node aur webpack ka hai.</li>
+  <li>Sirf <code>VITE_</code> se shuru hone wale variables browser tak pahunchte hain. Yeh prefix ek safety gate hai taaki galti se koi secret ship na ho jaaye.</li>
+  <li>Jo bhi is tarah expose hota hai woh <b>public</b> hai — woh JS bundle mein chala jaata hai aur koi bhi padh sakta hai. Publishable keys isi ke liye bani hain; secret keys yahan kabhi mat daalna.</li>
+</ul>
+<p>Yeh fail-fast <code>throw</code> achhi practice hai — start pe saaf error milna Clerk ke andar se aane wale confusing error se behtar hai.</p>
+
+<h3>Assets: <span class="file">assets.js</span> kyun hai</h3>
+<pre><code><span class="k">import</span> logo <span class="k">from</span> <span class="s">'./logo.svg'</span>;
+<span class="k">import</span> searchIcon <span class="k">from</span> <span class="s">'./searchIcon.svg'</span>;
+<span class="k">export const</span> assets = { logo, searchIcon, <span class="c">/* …aur 40 */</span> };</code></pre>
+<p>Image import karne pe aapko uska <em>final URL</em> milta hai, Vite ke hash lagane ke baad — <code>logo-BN30LNQe.svg</code>, jo aap <span class="file">client/dist/assets/</span> mein dekh sakte ho. Hashing ki wajah se browsers files ko aggressively cache kar sakte hain aur phir bhi badli hui file uthaa lete hain. Sab ek module mein rakhne se components <code>assets.logo</code> likhte hain, dozens relative paths sambhalne ki zaroorat nahi.</p>
+
+<p>Isi file mein aapka nakli database bhi hai — <code>roomsDummyData</code>, <code>userBookingsDummyData</code>, <code>cities</code>, <code>facilityIcons</code>. Yeh aakhri wala ek badhiya pattern hai: string ko icon se jodta hai bina kisi if-else chain ke.</p>
+<pre><code><span class="t">&lt;img</span> <span class="a">src</span>={facilityIcons[item]} <span class="a">alt</span>=<span class="s">""</span> <span class="t">/&gt;</span>   <span class="c">// "Free WiFi" → wifi svg</span></code></pre>
+
+<h3>AddRoom ke object URLs</h3>
+<pre><code><span class="k">const</span> <span class="f">selectSlot</span> = (key, file) =&gt;
+  <span class="f">setImages</span>((prev) =&gt; {
+    <span class="k">if</span> (prev[key]) URL.<span class="f">revokeObjectURL</span>(prev[key].url);   <span class="c">// purana free karo</span>
+    <span class="k">return</span> { ...prev, [key]: file ? { file, url: URL.<span class="f">createObjectURL</span>(file) } : <span class="k">null</span> };
+  });</code></pre>
+<p><code>createObjectURL</code> ek temporary <code>blob:</code> URL banata hai jo memory mein padi file ko point karta hai, jisse aap upload hone se pehle hi image preview dikha sakte ho. Har URL memory pakde rehta hai jab tak revoke na karo — isliye slot badalte waqt <code>revokeObjectURL</code> call hota hai. Yeh bilkul wahi resource management hai jo React aapke liye nahi karega.</p>
+
+<!-- 23 -->
+<h2 id="s23"><span class="n">Section 23</span>Tailwind CSS</h2>
+
+<p>Alag stylesheet ki jagah aap chhoti utility classes seedha markup mein jodte ho:</p>
+<pre><code><span class="t">&lt;div</span> <span class="a">className</span>=<span class="s">"flex flex-col md:flex-row items-start py-10 gap-6 border-b border-gray-300"</span><span class="t">&gt;</span></code></pre>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Pattern</th><th>Matlab</th><th>Aapke code mein</th></tr></thead>
+  <tbody>
+  <tr><td><code>md:</code> <code>lg:</code> <code>xl:</code></td><td>Us breakpoint se upar lagta hai — mobile-first</td><td><code>flex-col md:flex-row</code></td></tr>
+  <tr><td><code>max-md:</code></td><td>Us breakpoint se <em>neeche</em> lagta hai</td><td><code>max-md:hidden</code></td></tr>
+  <tr><td><code>hover:</code> <code>active:</code> <code>disabled:</code></td><td>State variants</td><td><code>hover:bg-primary-dull active:scale-95</code></td></tr>
+  <tr><td><code>bg-white/80</code></td><td>Opacity ka shortcut</td><td>scroll hua navbar</td></tr>
+  <tr><td><code>group</code> + <code>group-hover:</code></td><td>Child parent ke hover pe react karta hai</td><td>Navbar ki underline</td></tr>
+  <tr><td><code>peer</code> + <code>peer-checked:</code></td><td>Sibling input ke state pe react karta hai</td><td><span class="file">ListRoom.jsx</span> ka availability toggle</td></tr>
+  <tr><td><code>sr-only</code></td><td>Dikhta nahi, par screen reader padh leta hai</td><td>us toggle ke peeche ka asli checkbox</td></tr>
+  <tr><td><code>last:</code> <code>first:</code></td><td>Position ke hisaab se variants</td><td>room list pe <code>last:border-0</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Aapka custom theme</h3>
+<pre><code><span class="k">@import</span> <span class="s">"tailwindcss"</span>;
+
+<span class="k">@theme</span> {
+  --color-primary: #2563eb;
+  --color-primary-dull: #1d4ed8;
+  --color-secondary: #fbbf24;
+}</code></pre>
+<p>Yeh Tailwind v4 ka config-in-CSS tarika hai — <span class="file">tailwind.config.js</span> ki zaroorat hi nahi. <code>--color-primary</code> define karte hi <code>bg-primary</code>, <code>text-primary</code>, <code>border-primary</code> aur baaki saari colour utilities apne aap ban jaati hain.</p>
+
+<div class="aside good">
+  <span class="lbl">Custom toggle do baar padhne layak hai</span>
+  <p>Asli <code>&lt;input type="checkbox"&gt;</code> ko <code>sr-only</code> se chhupaya gaya hai — taaki keyboard aur screen-reader users ko sahi semantics milein — aur do sibling divs <code>peer-checked:</code> se dikhne wala switch banate hain. Designed control, bina accessibility gawaaye.</p>
+</div>
+
+<!-- 24 -->
+<h2 id="s24"><span class="n">Section 24</span>Teen flows, shuru se aakhir tak</h2>
+
+<h3>Flow 1 · Search</h3>
+<figure class="dg">
+  <div class="stack">
+    <div class="box"><b>1 · Hero form</b><small>local state: destination, checkIn, checkOut, guests</small></div>
+    <span class="arw txt">↓ submit → preventDefault()</span>
+    <div class="box wrn"><b>2 · rememberCity(destination)</b><small>context aakhri teen rakhta hai, duplicate hataake</small></div>
+    <span class="arw">↓</span>
+    <div class="box acc"><b>3 · navigate("/rooms?destination=Dubai&amp;…")</b></div>
+    <span class="arw">↓</span>
+    <div class="box vlt"><b>4 · AllRooms useSearchParams() padhta hai</b></div>
+    <span class="arw">↓</span>
+    <div class="box grn"><b>5 · useMemo filter aur sort karta hai → cards render</b></div>
+  </div>
+</figure>
+<p><code>rememberCity</code> ke andar ka dedupe ek line ka kamaal hai, dhyan se padho:</p>
+<pre><code><span class="f">setSearchedCities</span>((prev) =&gt; [city, ...prev.<span class="f">filter</span>((item) =&gt; item !== city)].<span class="f">slice</span>(<span class="i">0</span>, <span class="i">3</span>));
+<span class="c">// pehle se hai to hatao → sabse aage lagao → list ko 3 pe cap karo</span></code></pre>
+
+<h3>Flow 2 · Booking</h3>
+<figure class="dg">
+  <div class="stack">
+    <div class="box"><b>1 · Room card pe click</b><small>&lt;Link to={`/rooms/${room._id}`}&gt;</small></div>
+    <span class="arw">↓</span>
+    <div class="box"><b>2 · RoomDetails: useParams → room dhoondo</b><small>na mila → &lt;NotFound /&gt;</small></div>
+    <span class="arw">↓</span>
+    <div class="box"><b>3 · Dates aur guests chuno</b><small>nights aur totalPrice render ke dauraan hi calculate</small></div>
+    <span class="arw txt">↓ pehla submit</span>
+    <div class="box wrn"><b>4 · isRoomAvailable()</b><small>har maujooda booking se overlap check</small></div>
+    <span class="arw txt">↓ doosra submit, sirf agar available ho</span>
+    <div class="box acc"><b>5 · bookRoom()</b><small>record banata hai, bookings mein sabse aage jodta hai</small></div>
+    <span class="arw">↓</span>
+    <div class="box grn"><b>6 · navigate("/my-bookings")</b><small>nayi booking wahan already maujood</small></div>
+  </div>
+  <figcaption>Ek button, do kaam — uska label hai <code>{availability?.ok ? "Book Now" : "Check Availability"}</code>.</figcaption>
+</figure>
+
+<p>Date-overlap check poore project ka sabse dilchasp algorithm hai:</p>
+<pre><code><span class="k">return</span> !bookings.<span class="f">some</span>((booking) =&gt;
+  booking.room._id === roomId &amp;&amp;
+  start &lt; <span class="k">new</span> <span class="f">Date</span>(booking.checkOutDate) &amp;&amp;
+  <span class="k">new</span> <span class="f">Date</span>(booking.checkInDate) &lt; end
+);</code></pre>
+
+<figure class="dg">
+  <p style="text-align:center; font-size:14.5px; margin:0 0 16px; max-width:none"><b>Do ranges tabhi overlap karti hain jab dono ek doosre ke khatam hone se pehle shuru hoti hon.</b></p>
+  <div style="max-width:540px; margin:0 auto; font-family:var(--mono); font-size:12.5px; line-height:2.2">
+    <div>maujooda booking &nbsp;<span style="background:var(--violet-soft); color:var(--violet); padding:2px 26px; border-radius:3px">════════</span></div>
+    <div>overlap karti hai &nbsp;<span style="background:var(--warn-soft); color:var(--warn); padding:2px 20px; border-radius:3px">═════</span></div>
+    <div>pehle, theek hai &nbsp;<span style="background:var(--green-soft); color:var(--green); padding:2px 12px; border-radius:3px">═══</span></div>
+    <div>baad mein, theek &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="background:var(--green-soft); color:var(--green); padding:2px 14px; border-radius:3px">════</span></div>
+  </div>
+  <figcaption><code>&lt;=</code> ki jagah strict <code>&lt;</code> jaan bujh ke hai — jis din koi check-out kare usi din doosra check-in kar sakta hai.</figcaption>
+</figure>
+
+<p>Phir <span class="file">MyBookings.jsx</span> mein <code>payBooking</code> ek saath teen fields badalta hai (<code>isPaid</code>, <code>status</code>, <code>paymentMethod</code>) jabki <code>cancelBooking</code> record ko filter kar deta hai — update ke liye <code>map</code>, delete ke liye <code>filter</code>, bilkul jaise Section 11 mein bataya.</p>
+
+<h3>Flow 3 · Owner banna</h3>
+<figure class="dg">
+  <div class="stack">
+    <div class="box"><b>1 · "List Your Hotel" pe click</b><small>setShowHotelReg(true)</small></div>
+    <span class="arw txt">↓ App.jsx {showHotelReg &amp;&amp; &lt;HotelReg /&gt;} render karta hai</span>
+    <div class="box"><b>2 · Modal khulta hai</b><small>body scroll lock · Escape se band · bahar click se band</small></div>
+    <span class="arw txt">↓ submit</span>
+    <div class="box acc"><b>3 · registerHotel(details)</b><small>setHotel · setIsOwner(true) · setShowHotelReg(false) · notify · navigate</small></div>
+    <span class="arw">↓</span>
+    <div class="box vlt"><b>4 · Navbar ka button ab "Dashboard" dikhata hai</b><small>kyunki isOwner flip ho gaya</small></div>
+    <span class="arw">↓</span>
+    <div class="box grn"><b>5 · /owner → Layout + Dashboard</b><small>Navbar aur Footer isOwnerPath se chhup gaye</small></div>
+  </div>
+  <figcaption>Ek state change navbar badalta hai, ek route kholta hai, aur poora page shell swap kar deta hai. Yahi declarative UI hai.</figcaption>
+</figure>
+
+<!-- 25 -->
+<h2 id="s25"><span class="n">Section 25</span>Render lifecycle, ek hi picture mein</h2>
+
+<p>Upar jo kuch bhi bataya, woh aakhir mein bas yeh loop hai, baar-baar chalta hua:</p>
+
+<figure class="dg">
+  <div class="stack">
+    <div class="box wrn"><b>1 · Trigger</b><small>click, keystroke, URL change, ya timer</small></div>
+    <span class="arw">↓</span>
+    <div class="box acc"><b>2 · Render</b><small>React aapke component functions call karta hai — yeh pure hone chahiye</small></div>
+    <span class="arw">↓</span>
+    <div class="box vlt"><b>3 · Reconcile</b><small>naye aur purane element tree ka diff, list items <code>key</code> se match hote hain</small></div>
+    <span class="arw">↓</span>
+    <div class="box grn"><b>4 · Commit</b><small>sirf asli differences hi real DOM mein likhe jaate hain</small></div>
+    <span class="arw">↓</span>
+    <div class="box"><b>5 · Effects</b><small>useEffect chalte hain — pehle cleanup, phir naya effect</small></div>
+    <span class="arw txt">↺ &nbsp;agle trigger pe wapas 1 pe</span>
+  </div>
+</figure>
+
+<p><b>Step 2 pure kyun hona chahiye:</b> React ko haq hai ki woh aapke component ko ek se zyada baar call kare, ya koi render bekaar samajh ke phenk de, ya development Strict Mode mein jaan bujh ke do baar chalaye taaki side effects pakde jaayein. Agar rendering cheezein mutate bhi karti to yeh sab safe nahi hota. Side effects step 5 mein hi belong karte hain.</p>
+
+<p><b>Step 4 sasta kyun hai:</b> React poora page dobara nahi banata. Woh do halke-fulke JavaScript object trees compare karta hai aur sirf un DOM nodes ko chhota hai jo sach mein alag hain — yahan ek text node, wahan ek attribute. DOM slow hai; object comparison fast hai. React ki performance ki poori dalil yahi hai.</p>
+
+<!-- 26 -->
+<h2 id="s26"><span class="n">Section 26</span>Kya missing hai, aur aage kya banao</h2>
+
+<p>Project ki seemayein jaanna utna hi valuable hai jitna uske andar kya hai woh jaanna.</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Kami</th><th>Abhi kya hota hai</th><th>Fix karne se kya seekhoge</th></tr></thead>
+  <tbody>
+  <tr><td><b>Persistence nahi hai</b></td><td>Refresh karo aur saari bookings, rooms, owner status gayab — sab memory mein hi tha</td><td><code>localStorage</code> + <code>useEffect</code>, ya asli backend</td></tr>
+  <tr><td><b>Backend nahi hai</b></td><td>Data <span class="file">assets.js</span> se aata hai; users ya devices ke beech kuch share nahi hota</td><td><code>fetch</code>, async/await, loading aur error states, React Query</td></tr>
+  <tr><td><b>Protected routes nahi</b></td><td><code>/owner</code> bina register kiye, seedha URL type karke khul jaata hai</td><td>Route guards — ek wrapper jo <code>&lt;Navigate /&gt;</code> se redirect kare</td></tr>
+  <tr><td><b>Asli payment nahi</b></td><td><code>payBooking</code> bas <code>isPaid: true</code> set kar deta hai</td><td>Stripe Checkout, webhooks, payment server pe verify kyun hona chahiye</td></tr>
+  <tr><td><b>Bookings per-user nahi hain</b></td><td>My Bookings app ki saari bookings dikhata hai, sirf aapki nahi</td><td><code>currentUser._id</code> se filter; wahi soch owner dashboard ke liye hotel ke hisaab se</td></tr>
+  <tr><td><b>Images blob URLs hain</b></td><td>Upload ki hui room photos tab band hote hi mar jaati hain</td><td>File uploads, FormData, cloud storage</td></tr>
+  <tr><td><b>Error boundary nahi</b></td><td>Ek error poori app ko blank kar deta hai</td><td><code>&lt;ErrorBoundary&gt;</code> aur graceful degradation</td></tr>
+  <tr><td><b>Tests nahi</b></td><td>Har change click karke check karna padta hai</td><td>Vitest aur React Testing Library</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Sahi order kya hoga</h3>
+<ol>
+  <li><b>localStorage persistence.</b> Sabse chhota change, sabse zyada maza — bookings refresh ke baad bhi bachengi. Do effects aur ek lazy state initialiser.</li>
+  <li><b>Protected routes.</b> Lagbhag pandrah lines; redirects aur route composition sikha deta hai.</li>
+  <li><b>Bookings ko user se filter karo.</b> Ek <code>.filter()</code>, lekin isse aap data ownership sochne lagoge.</li>
+  <li><b>Saare filters URL mein le jao.</b> AllRooms mein jo shuru kiya tha use poora karo aur har filtered view linkable ban jaayega.</li>
+  <li><b>Asli backend.</b> Express aur MongoDB, phir dummy arrays ki jagah <code>fetch</code>. Yahin pe loading states, error states aur async React sach mein samajh aate hain.</li>
+</ol>
+
+<div class="aside good">
+  <span class="lbl">Aapke architecture ka inaam</span>
+  <p>Components context se data maangte hain aur badalne ke liye context actions call karte hain. Unhe kabhi farak nahi padta ki data <em>kahan se</em> aa raha hai. In-memory arrays ki jagah API calls lagane pe sirf <span class="file">AppProvider.jsx</span> badlega, aur kuch nahi. Separation of concerns ka practical matlab yahi hai — aur aapne yeh sahi banaya, woh bhi bina kisi server ke majboor kiye.</p>
+</div>
+
+<!-- 27 -->
+<h2 id="s27"><span class="n">Section 27</span>Khud ko test karo</h2>
+
+<p>Agar in sabka jawab yaad se de sako, to samajh lo project aapko samajh aa gaya. Jawab dekhne ke liye click karo.</p>
+
+<details>
+  <summary><code>&lt;AppProvider&gt;</code> ko <code>&lt;BrowserRouter&gt;</code> ke andar hi kyun hona chahiye?</summary>
+  <p>Kyunki AppProvider <code>useNavigate()</code> call karta hai, aur woh hook router context padhta hai. Koi bhi hook sirf woh context padh sakta hai jo uske kisi ancestor ne diya ho. Router ke bahar padhne ko kuch hai hi nahi, isliye React error phenk deta hai.</p>
+</details>
+
+<details>
+  <summary>Rooms list pe <code>key={index}</code> lagane se asal mein kya bigadta hai?</summary>
+  <p><code>addRoom</code> <code>[room, ...prev]</code> se naya room sabse aage jodta hai, isliye har purane item ka index ek se khisak jaata hai. React samajhta hai ki item 0 ka content badla, na ki naya item insert hua — aur galat DOM nodes reuse kar leta hai, jisse scroll position, focus aur uncontrolled input values purani hi reh jaati hain.</p>
+</details>
+
+<details>
+  <summary>Toast wala effect <code>clearTimeout</code> kyun return karta hai?</summary>
+  <p>Cleanup effect ke dobara chalne se pehle chalta hai. Agar pehle toast ke 3.5 second wale timer mein se 3 second beet chuke hain aur doosra toast aa jaaye, to cleanup purana timer cancel kar deta hai, jisse naye message ko poora time milta hai, aadhe second mein gayab nahi hota. Yeh unmount ke baad timer chalne se bhi bachata hai.</p>
+</details>
+
+<details>
+  <summary><code>totalRevenue</code> kahan rehta hai, aur woh state kyun nahi hai?</summary>
+  <p>Woh derived hai — <code>bookings.reduce((sum, b) =&gt; sum + b.totalPrice, 0)</code>, har render pe naya. Store kiya hua total us list se out of sync ho sakta hai jiska woh summary hai; har add, cancel aur edit pe usko update karna yaad rakhna padta. Derived value kabhi bhatak hi nahi sakti.</p>
+</details>
+
+<details>
+  <summary><code>&lt;RoomDetailsView&gt;</code> pe <code>key={room._id}</code> se kya hota hai?</summary>
+  <p>Rooms ke beech move karne pe woh poora remount force kar deta hai. Iske bina React purana instance reuse karta, aur room B pe room A ki chuni hui photo, dates aur availability result dikhte. Badli hui key ka matlab hai "alag cheez" — purana state poora phenk do.</p>
+</details>
+
+<details>
+  <summary><code>sorted.sort(…)</code> ki jagah <code>[...sorted].sort(…)</code> kyun?</summary>
+  <p><code>.sort()</code> jagah pe hi mutate karta hai. Yahan <code>sorted</code> waise bhi <code>.filter()</code> se aaya naya array hai, lekin aadat asli baat hai: kabhi bhi aisi cheez mutate mat karo jo state hai ya aage chal ke state ban sakti hai. Spread pehle copy bana deta hai.</p>
+</details>
+
+<details>
+  <summary><code>&lt;Link to="/rooms"&gt;</code> aur <code>&lt;a href="/rooms"&gt;</code> mein farak kya hai?</summary>
+  <p>Link click ko pakad ke client-side pe components swap karta hai — turant, aur Context state bacha rehta hai. Anchor poora reload karwa deta hai: bundle dobara download hota hai, React zero se remount hota hai, aur memory ki saari bookings khatam.</p>
+</details>
+
+<details>
+  <summary>AllRooms ke <code>useMemo</code> mein <code>openFilters</code> kyun nahi hai?</summary>
+  <p>Kyunki <code>openFilters</code> sirf yeh control karta hai ki mobile filter drawer dikhe ya nahi — usse yeh farak nahi padta ki kaun se rooms match karte hain. Use daal dete to har baar "SHOW" tap karne pe poora filter-and-sort dobara chalta. Dependencies mein bilkul wahi hona chahiye jo calculation padhti hai, ek bhi zyada nahi.</p>
+</details>
+
+<details>
+  <summary>App ko kaise pata chalta hai ki owner pages pe Navbar aur Footer chhupane hain?</summary>
+  <p><code>App.jsx</code> <code>useLocation()</code> padhta hai, <code>pathname.startsWith("/owner")</code> nikaalta hai, aur <code>{!isOwnerPath &amp;&amp; &lt;Navbar /&gt;}</code> render karta hai. Owner section apna shell khud deta hai — <code>Layout.jsx</code> aur <code>&lt;Outlet /&gt;</code> ke through.</p>
+</details>
+
+<details>
+  <summary><code>createId</code> timestamp <em>aur</em> counter dono kyun use karta hai?</summary>
+  <p><code>Date.now()</code> millisecond tak hi ja sakta hai, to ek hi millisecond mein bane do records ki id takra jaati — aur duplicate keys reconciliation tod dete hain. Badhta hua counter session ke andar uniqueness pakka karta hai. Asli app mein yeh id database deta.</p>
+</details>
+
+<hr>
+
+<div class="closer">
+  <h4 style="margin:0 0 10px">Chhota sa summary</h4>
+  <p>Aapne ek component tree banaya jo state se render hota hai. Local state local hi raha; jo do components ko chahiye tha woh Context mein chala gaya, jahan <b>data</b> aur <b>actions</b> milte hain, raw setters kabhi nahi. Jo state shareable honi chahiye woh URL mein hai. Effects sirf React ke bahar ki cheezein sambhalte hain — listeners, timers, document body — aur unme se har ek apne peeche saaf-safai karta hai. Lists ke paas pakki keys hain, updates kabhi mutate nahi karte, aur badli hui <code>key</code> woh tarika hai jisse aap jaan bujh ke state phenk dete ho.</p>
+  <p>Yeh sirf ek hotel booking app jitni knowledge nahi hai. Yeh lagbhag poora React hai.</p>
+</div>
+
+</div>
+</body>
+</html>
